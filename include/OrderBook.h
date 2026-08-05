@@ -18,5 +18,7 @@ class OrderBook {
 
     public:
 
+        bool empty() const;
+
         void printBook() const;
 };

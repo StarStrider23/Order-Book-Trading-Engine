@@ -17,6 +17,11 @@ void OrderBook::addToBook(const Order& order) {
 
 }
 
+bool OrderBook::empty() const
+{
+    return buyBook.empty() && sellBook.empty();
+}
+
 void OrderBook::printBook() const {
 
     std::cout << "-----------------------------" << "\n\n";

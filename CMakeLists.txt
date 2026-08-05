@@ -2,11 +2,24 @@ cmake_minimum_required(VERSION 3.20)
 
 project(TradingEngine)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(
-    ${PROJECT_NAME}
+include(FetchContent)
+
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+
+add_library(${PROJECT_NAME}
     src/Engine.cpp
     src/Order.cpp
     src/OrderBook.cpp
@@ -22,9 +35,14 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     -Wpedantic
 )
 
-add_executable(
-    TradingApp
-    app/main.cpp
-)
+add_executable(TradingApp app/main.cpp)
 
 target_link_libraries(TradingApp PRIVATE ${PROJECT_NAME})
+
+add_executable(EngineTests tests/EngineTests.cpp)
+
+target_link_libraries(EngineTests PRIVATE ${PROJECT_NAME} GTest::gtest_main)
+
+include(GoogleTest)
+
+gtest_discover_tests(EngineTests)

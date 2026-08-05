@@ -5,9 +5,8 @@ project(TradingEngine)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(
+add_library(
     ${PROJECT_NAME}
-    src/main.cpp
     src/Engine.cpp
     src/Order.cpp
     src/OrderBook.cpp
@@ -15,9 +14,9 @@ add_executable(
     src/Types.cpp
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE include)
+target_include_directories(${PROJECT_NAME} PUBLIC include)
 
-target_compile_options(TradingEngine PRIVATE
+target_compile_options(${PROJECT_NAME} PRIVATE
     -Wall
     -Wextra
     -Wpedantic
@@ -28,4 +27,4 @@ add_executable(
     app/main.cpp
 )
 
-target_link_libraries(TradingApp PRIVATE TradingEngine)
+target_link_libraries(TradingApp PRIVATE ${PROJECT_NAME})

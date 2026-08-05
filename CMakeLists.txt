@@ -16,3 +16,16 @@ add_executable(
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
+
+target_compile_options(TradingEngine PRIVATE
+    -Wall
+    -Wextra
+    -Wpedantic
+)
+
+add_executable(
+    TradingApp
+    app/main.cpp
+)
+
+target_link_libraries(TradingApp PRIVATE TradingEngine)

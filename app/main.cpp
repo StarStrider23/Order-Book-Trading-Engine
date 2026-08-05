@@ -1,4 +1,4 @@
-#include "git sEngine.h"
+#include "Engine.h"
 
 // Order Book & Trading Engine
 
@@ -29,6 +29,24 @@ To run:
 Once in the build directory:
 
 ./TradingEngine
+
+*/
+
+/* 
+
+Git
+
+# Check what's changed
+git status
+
+# Review changes (optional but useful)
+git diff
+
+# Stage your changes
+git add .
+
+# Save a snapshot
+git commit -m "Implement market order matching"
 
 */
 

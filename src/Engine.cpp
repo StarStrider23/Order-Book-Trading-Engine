@@ -1,5 +1,10 @@
 #include "Engine.h"
 
+bool Engine::empty() const
+{
+    return book.buyBook.empty() && book.sellBook.empty();
+}
+
 void Engine::submitOrder(Side side, double price, int quantity) {
 
     std::string id;

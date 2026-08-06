@@ -1,8 +1,10 @@
+#pragma once
+
+#include "Order.h"
+
 #include <iostream>
 #include <map>
 #include <deque>
-
-#include "Order.h"
 
 
 class OrderBook {
@@ -17,8 +19,6 @@ class OrderBook {
         void addToBook(const Order& order);
 
     public:
-
-        bool empty() const;
 
         void printBook() const;
 };

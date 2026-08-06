@@ -1,9 +1,11 @@
-#include <iostream>
-#include <unordered_map>
-#include <vector>
+#pragma once
 
 #include "OrderBook.h"
 #include "Trade.h"
+
+#include <iostream>
+#include <unordered_map>
+#include <vector>
 
 class Engine {
 
@@ -39,6 +41,8 @@ class Engine {
         const Trade* findTradeById(const std::string& tradeId) const;
 
     public:
+
+        bool empty() const;
 
         void submitOrder(Side side, double price, int quantity);
 

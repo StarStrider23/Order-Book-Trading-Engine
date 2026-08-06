@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "OrderBook.h"
+#include "Engine.h"
 
 /*
 
@@ -10,9 +10,17 @@ ctest
 
 */
 
-TEST(OrderBookTest, StartsEmpty) {
+TEST(EngineTest, StartsEmpty) {
 
-    OrderBook book;
+    Engine eng;
 
-    EXPECT_TRUE(book.empty());
+    EXPECT_TRUE(eng.empty());
+}
+
+TEST(EngineTest, AddBuyOrderMakesBookNonEmpty) {
+    Engine eng;
+
+    eng.submitOrder(Side::Buy, 100, 100);
+
+    EXPECT_FALSE(eng.empty());
 }

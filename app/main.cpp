@@ -32,23 +32,7 @@ Once in the build directory:
 
 */
 
-/* 
 
-Git
-
-# Check what's changed
-git status
-
-# Review changes (optional but useful)
-git diff
-
-# Stage your changes
-git add .
-
-# Save a snapshot
-git commit -m "Implement market order matching"
-
-*/
 
 constexpr Side Buy = Side::Buy;
 constexpr Side Sell = Side::Sell;

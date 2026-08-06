@@ -1,7 +1,9 @@
-#include <iostream>
-#include <string>
+#pragma once
 
 #include "Types.h"
+
+#include <iostream>
+#include <string>
 
 class Order {
 

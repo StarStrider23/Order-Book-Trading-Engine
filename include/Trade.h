@@ -25,11 +25,12 @@ class Trade {
 
         std::string getTradeId() const;
 
-        std::string getBuyOrderId () const;
+        std::string getBuyOrderId() const;
 
-        std::string getSellOrderId () const;
+        std::string getSellOrderId() const;
 
         double getTradePrice() const;
 
         int getTradeQuantity() const;
+
 };

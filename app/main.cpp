@@ -15,20 +15,20 @@ Any time a .cpp file is changed:
 
 cd build
 cmake --build .
-./TradingingEngine 
+./TradingApp
 
 If adding a new class (new .h/.cpp files): 
 
 cd build
 cmake ..
 cmake --build .
-./TradingEngine 
+./TradingApp
 
 To run:
 
 Once in the build directory:
 
-./TradingEngine
+./TradingApp
 
 */
 
@@ -39,18 +39,20 @@ constexpr Side Sell = Side::Sell;
 
 int main() {
     
-    Engine eng;
+    // Engine eng;
 
-    eng.submitOrder(Buy, 100, 30);
-    eng.submitOrder(Sell, 105, 80);
-    eng.submitOrder(Sell, 100, 50);
-    eng.submitOrder(Buy, 110, 100);
+    // eng.submitOrder(Buy, 100, 30);
+    // eng.submitOrder(Sell, 105, 80);
+    // eng.submitOrder(Sell, 100, 50);
+    // eng.submitOrder(Buy, 110, 100);
 
-    eng.submitOrder(Buy, 100, 50);
-    eng.submitOrder(Buy, 100, 75);
-    eng.submitOrder(Sell, 150, 50);
-    eng.changeOrder("B3", 150, 50);
-    eng.printBook();
+    // eng.submitOrder(Buy, 100, 50);
+    // eng.submitOrder(Buy, 100, 75);
+    // eng.submitOrder(Sell, 150, 50);
+    // eng.changeOrder("B3", 150, 50);
+    // eng.printBook();
+
+    // eng.printTradeHistory();
 
     return 0;
 }

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <vector>
+#include <optional>
 
 class Engine {
 
@@ -26,11 +27,11 @@ class Engine {
 
         const Order* findOrderInDeque(const std::deque<Order>& orders, const std::string& id) const;
 
-        Order* findOrderById(const std::string& id);
+        std::optional<Order> modifyOrder(const std::string& id, double new_price, int new_quantity);
 
-        const Order* findOrderById(const std::string& id) const;
+        std::optional<Order> modifyOrderPrice(const std::string& id, double newPrice);
 
-        void modifyOrder(const std::string& id, double new_price, int new_quantity);
+        std::optional<Order> modifyOrderQuantity(const std::string& id, int newQuantity);
 
         void removeOrderFromDeque(std::deque<Order>& orders, const std::string& id);
 
@@ -42,18 +43,29 @@ class Engine {
 
     public:
 
-        bool empty() const;
+        bool emptyOrderBook() const;
 
-        void submitOrder(Side side, double price, int quantity);
+        bool emptyTradeHistory() const;
+
+        Order submitOrder(Side side, double price, int quantity);
 
         void printBook() const;
 
+        const Order* findOrderById(const std::string& id) const;
+
+        Order* findOrderById(const std::string& id);
+
         void displayOrderById(const std::string& id) const;
 
-        void changeOrder(const std::string& id, double price, int quantity);
+        void changeOrder(const std::string& id, double newPrice, int newQuantity);
+
+        void changeOrderPrice(const std::string& id, double newPrice);
+
+        void changeOrderQuantity(const std::string& id, int newQuantity);
 
         void cancelOrder(const std::string& id);
 
         void displayTradeById(const std::string& tradeId) const;
 
+        void printTradeHistory() const;
 };

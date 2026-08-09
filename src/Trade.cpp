@@ -25,11 +25,11 @@ std::string Trade::getSellOrderId () const {
     return sellOrderId;
 }
 
-double Trade::getTradePrice() const {
+double Trade::getPrice() const {
     return tradePrice;
 }
 
-int Trade::getTradeQuantity() const {
+int Trade::getQuantity() const {
     return tradeQuantity;
 }
 
@@ -38,7 +38,7 @@ std::ostream& operator<<(std::ostream& os, const Trade& trade) {
         << "TRADE ID: " << trade.getTradeId() << "\n"
         << "BUY ORDER ID: " << trade.getBuyOrderId() << "\n"
         << "SELL ORDER ID: " << trade.getSellOrderId() << "\n"
-        << "PRICE: " << trade.getTradePrice() << "\n"
-        << "QUANTITY: " << trade.getTradeQuantity() << "\n\n";
+        << "PRICE: " << trade.getPrice() << "\n"
+        << "QUANTITY: " << trade.getQuantity() << "\n\n";
     return os;
 }

@@ -51,6 +51,7 @@ TEST(EngineTest, MatchingOrdersProduceTrade) {
     EXPECT_TRUE(eng.emptyOrderBook());
 }
 
+
 TEST(TradeTest, TradePopulatesTradingHistory) {
     
     Engine eng;
@@ -61,7 +62,28 @@ TEST(TradeTest, TradePopulatesTradingHistory) {
     EXPECT_FALSE(eng.emptyTradeHistory());
 }
 
-TEST(PartialFill, PartialOrderRemains) {
+TEST(TradeTest, RestingOrderPrice) {
+
+    Engine eng;
+
+    Order first = eng.submitOrder(Side::Buy, 105, 100);
+    eng.submitOrder(Side::Sell, 100, 100);
+
+    Order second = eng.submitOrder(Side::Sell, 100, 100);
+    eng.submitOrder(Side::Buy, 105, 100);
+
+    auto firstTrades = eng.findTradesByOrderId(first.getId());
+    auto secondTrades = eng.findTradesByOrderId(second.getId());
+
+    ASSERT_EQ(firstTrades.size(), 1);
+    ASSERT_EQ(secondTrades.size(), 1);
+
+    EXPECT_EQ(firstTrades[0].getPrice(), 105);
+    EXPECT_EQ(secondTrades[0].getPrice(), 100);
+
+}
+
+TEST(PartialFillTest, PartialOrderRemains) {
 
     Engine eng;
 
@@ -82,7 +104,7 @@ TEST(PartialFill, PartialOrderRemains) {
     EXPECT_FALSE(eng.emptyTradeHistory());
 }
 
-TEST(OrderModification, PriceChange) {
+TEST(OrderModificationTest, PriceChange) {
     Engine eng;
 
     Order order = eng.submitOrder(Side::Buy, 100, 100);
@@ -96,7 +118,7 @@ TEST(OrderModification, PriceChange) {
     EXPECT_EQ(modified->getPrice(), 105);
 }
 
-TEST(OrderModification, QuantityChange) {
+TEST(OrderModificationTest, QuantityChange) {
     Engine eng;
 
     Order order = eng.submitOrder(Side::Buy, 100, 100);
@@ -110,7 +132,7 @@ TEST(OrderModification, QuantityChange) {
     EXPECT_EQ(modified->getQuantity(), 105);
 }
 
-TEST(OrderModification, PriceAndQuantityChange) {
+TEST(OrderModificationTest, PriceAndQuantityChange) {
     Engine eng;
 
     Order order = eng.submitOrder(Side::Buy, 100, 100);
@@ -124,4 +146,80 @@ TEST(OrderModification, PriceAndQuantityChange) {
     EXPECT_EQ(modified->getPrice(), 105);
 
     EXPECT_EQ(modified->getQuantity(), 110);
+}
+
+TEST(OrderModification, QuantityChangeLosesPriority)
+{
+    Engine eng;
+
+    Order first = eng.submitOrder(Side::Buy, 100, 100);
+    Order second = eng.submitOrder(Side::Buy, 100, 100);
+
+    eng.changeOrderQuantity(first.getId(), 80);
+
+    eng.submitOrder(Side::Sell, 100, 50);
+
+    Order* firstRemaining = eng.findOrderById(first.getId());
+    Order* secondRemaining = eng.findOrderById(second.getId());
+
+    ASSERT_NE(firstRemaining, nullptr);
+    ASSERT_NE(secondRemaining, nullptr);
+
+    EXPECT_EQ(firstRemaining->getQuantity(), 80);
+    EXPECT_EQ(secondRemaining->getQuantity(), 50);
+}
+
+TEST(OrderCancellationTest, OrderCancellation) {
+
+    Engine eng;
+
+    Order order = eng.submitOrder(Side::Buy, 100, 100);
+
+    eng.cancelOrder(order.getId());
+
+    EXPECT_TRUE(eng.emptyOrderBook());
+
+}
+
+TEST(FIFO, OlderOrderMatchesFirst)
+{
+    Engine eng;
+
+    Order first = eng.submitOrder(Side::Buy, 100, 50);
+    Order second = eng.submitOrder(Side::Buy, 100, 50);
+
+    eng.submitOrder(Side::Sell, 100, 60);
+
+    auto firstTrades = eng.findTradesByOrderId(first.getId());
+    auto secondTrades = eng.findTradesByOrderId(second.getId());
+
+    ASSERT_EQ(firstTrades.size(), 1);
+    ASSERT_EQ(secondTrades.size(), 1);
+
+    EXPECT_EQ(firstTrades[0].getQuantity(), 50);
+    EXPECT_EQ(secondTrades[0].getQuantity(), 10);
+}
+
+TEST(PriceMatching, BestPriceSelection) {
+
+    Engine eng;
+
+    Order first = eng.submitOrder(Side::Buy, 99, 50);
+    Order second = eng.submitOrder(Side::Buy, 100, 50);
+    Order third = eng.submitOrder(Side::Buy, 99, 50);
+
+    Order* firstRemaining = eng.findOrderById(first.getId());
+    Order* secondRemaining = eng.findOrderById(second.getId());
+    Order* thirdRemaining = eng.findOrderById(third.getId());
+
+    ASSERT_NE(firstRemaining, nullptr);
+    ASSERT_NE(secondRemaining, nullptr);
+    ASSERT_NE(thirdRemaining, nullptr);
+
+    eng.submitOrder(Side::Sell, 100, 50);
+
+    EXPECT_EQ(firstRemaining->getQuantity(), 50);
+    EXPECT_EQ(secondRemaining->getQuantity(), 0);
+    EXPECT_EQ(thirdRemaining->getQuantity(), 50);
+
 }

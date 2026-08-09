@@ -39,7 +39,7 @@ class Engine {
 
         void matchOrder(Order& order, OrderBook& book);
 
-        const Trade* findTradeById(const std::string& tradeId) const;
+        const Trade* findTradeByTradeId(const std::string& tradeId) const;
 
     public:
 
@@ -56,6 +56,8 @@ class Engine {
         Order* findOrderById(const std::string& id);
 
         void displayOrderById(const std::string& id) const;
+
+        std::vector<Trade> findTradesByOrderId(const std::string& id) const;
 
         void changeOrder(const std::string& id, double newPrice, int newQuantity);
 

@@ -225,9 +225,13 @@ std::optional<Order> Engine::modifyOrder(const std::string& id, double newPrice,
             orderIndex[id] = {updatedOrder.getSide(), updatedOrder.getPrice()};
         }
 
-    } else if (order->getQuantity() != newQuantity) {
+    } else if (updatedOrder.getQuantity() != newQuantity) {
 
-        order->setQuantity(newQuantity);
+        removeOrder(id);
+
+        updatedOrder.setQuantity(newQuantity);
+
+        book.addToBook(updatedOrder);
         
     }
 
@@ -325,7 +329,7 @@ void Engine::cancelOrder(const std::string& id) {
 }
 
 
-const Trade* Engine::findTradeById(const std::string& tradeId) const {
+const Trade* Engine::findTradeByTradeId(const std::string& tradeId) const {
 
     for (const Trade& trade : tradeHistory) {
 
@@ -338,9 +342,23 @@ const Trade* Engine::findTradeById(const std::string& tradeId) const {
     return nullptr;
 }
 
+std::vector<Trade> Engine::findTradesByOrderId(const std::string& id) const
+{
+    std::vector<Trade> result;
+
+    for (const Trade& trade : tradeHistory) {
+        if (trade.getBuyOrderId() == id ||
+            trade.getSellOrderId() == id) {
+            result.push_back(trade);
+        }
+    }
+
+    return result;
+}
+
 void Engine::displayTradeById(const std::string& id) const {
 
-    auto trade = findTradeById(id);
+    auto trade = findTradeByTradeId(id);
 
     if (trade) {
         std::cout << *trade;

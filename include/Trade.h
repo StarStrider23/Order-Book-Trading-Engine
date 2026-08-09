@@ -19,7 +19,8 @@ class Trade {
         Trade(const std::string& tradeId, 
                 const std::string& buyOrderId, 
                 const std::string& sellOrderId, 
-                double tradePrice, int tradeQuantity);
+                const double tradePrice, 
+                const int tradeQuantity);
 
     public:
 
@@ -29,8 +30,8 @@ class Trade {
 
         std::string getSellOrderId() const;
 
-        double getTradePrice() const;
+        double getPrice() const;
 
-        int getTradeQuantity() const;
+        int getQuantity() const;
 
 };

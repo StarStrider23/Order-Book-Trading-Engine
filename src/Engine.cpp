@@ -5,9 +5,164 @@ bool Engine::emptyOrderBook() const {
     return book.buyBook.empty() && book.sellBook.empty();
 }
 
+std::optional<double> Engine::getBestBid() const {
+
+    if (book.buyBook.empty()) {
+
+        return std::nullopt;
+    }
+
+    return book.buyBook.begin()->first;
+}
+
+std::optional<double> Engine::getBestAsk() const {
+
+    if (book.sellBook.empty()) {
+
+        return std::nullopt;
+    }
+
+    return book.buyBook.begin()->first;
+}
+
+std::optional<double> Engine::getSpread() const {
+    
+    if (book.buyBook.empty() || book.sellBook.empty()) {
+
+        return std::nullopt;
+    }
+
+    auto bestAsk = getBestAsk().value();
+    auto bestBid = getBestBid().value();
+
+    return bestAsk - bestBid;
+}
+
+int Engine::getTotalBidQuantity() const {
+
+    int totalBidQuantity = 0;
+
+    for (const auto& [price, orders] : book.buyBook) {
+
+        for (const Order& order : orders) {
+
+            totalBidQuantity += order.getQuantity();
+        }
+    }
+    return totalBidQuantity;
+};
+
+int Engine::getTotalAskQuantity() const {
+        
+    int totalAskQuantity = 0;
+
+    for (const auto& [price, orders] : book.sellBook) {
+
+        for (const Order& order : orders) {
+
+            totalAskQuantity += order.getQuantity();
+        }
+    }
+    return totalAskQuantity;
+};
+
+int Engine::getActiveBuyOrderCount() const {
+
+    int totalBuyOrders = 0;
+
+    for (const auto& [price, orders] : book.buyBook) {
+
+        totalBuyOrders += orders.size();
+    }
+
+    return totalBuyOrders;
+}
+
+int Engine::getActiveSellOrderCount() const {
+
+    int totalSellOrders = 0;
+
+    for (const auto& [price, orders] : book.sellBook) {
+        
+        totalSellOrders += orders.size();
+    }
+
+    return totalSellOrders;
+
+}
+
+int Engine::getActiveOrderCount() const {
+
+    return getActiveBuyOrderCount() + getActiveSellOrderCount();
+}
+
+int Engine::getBidLevelCount() const {
+
+    return book.buyBook.size();
+}
+
+int Engine::getAskLevelCount() const {
+
+    return book.sellBook.size();
+
+}
+
 bool Engine::emptyTradeHistory() const {
 
     return tradeHistory.empty();
+}
+
+int Engine::getTradeQuantity() const {
+
+    int totalTradeQuantity = 0;
+
+    for (const Trade& trade : tradeHistory) {
+
+        totalTradeQuantity += trade.getQuantity();
+    }
+
+    return totalTradeQuantity;
+
+}
+
+std::size_t Engine::getNumberOfTrades() const {
+
+    return tradeHistory.size();
+}
+
+double Engine::getAveragePrice() const {
+
+    double totalTradePrice = 0;
+
+    if (tradeHistory.empty()) {
+        return totalTradePrice;
+    }
+
+    for (const Trade& trade : tradeHistory) {
+
+        totalTradePrice += trade.getPrice();
+    }
+
+    return totalTradePrice / tradeHistory.size();
+
+}
+
+double Engine::getVolumeWeightedAveragePrice() const {
+
+    double priceVolume = 0;
+    int totalQuantity = 0;
+
+    if (tradeHistory.empty()) {
+        return priceVolume;
+    }
+
+    for (const Trade& trade : tradeHistory) {
+
+        priceVolume += trade.getPrice() * trade.getQuantity();
+        totalQuantity += trade.getQuantity();
+    }
+
+    return priceVolume / totalQuantity;
 }
 
 Order Engine::submitOrder(Side side, double price, int quantity) {
@@ -347,8 +502,7 @@ std::vector<Trade> Engine::findTradesByOrderId(const std::string& id) const
     std::vector<Trade> result;
 
     for (const Trade& trade : tradeHistory) {
-        if (trade.getBuyOrderId() == id ||
-            trade.getSellOrderId() == id) {
+        if (trade.getBuyOrderId() == id || trade.getSellOrderId() == id) {
             result.push_back(trade);
         }
     }

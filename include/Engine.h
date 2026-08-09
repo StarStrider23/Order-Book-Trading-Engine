@@ -45,7 +45,43 @@ class Engine {
 
         bool emptyOrderBook() const;
 
+        // Active Order Statistics
+
+        std::optional<double> getBestBid() const;
+
+        std::optional<double> getBestAsk() const;
+
+        std::optional<double> getSpread() const;
+
+        int getTotalBidQuantity() const;
+        
+        int getTotalAskQuantity() const;
+
+        int getActiveBuyOrderCount() const;
+
+        int getActiveSellOrderCount() const;
+
+        int getActiveOrderCount() const;
+
+        int getBidLevelCount() const;
+
+        int getAskLevelCount() const;
+
+        //
+
         bool emptyTradeHistory() const;
+
+        // Trade Statistics
+
+        int getTradeQuantity() const;
+
+        std::size_t getNumberOfTrades() const;
+
+        double getAveragePrice() const;
+
+        double getVolumeWeightedAveragePrice() const;
+
+        //
 
         Order submitOrder(Side side, double price, int quantity);
 

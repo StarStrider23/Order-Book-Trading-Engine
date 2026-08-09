@@ -39,20 +39,28 @@ constexpr Side Sell = Side::Sell;
 
 int main() {
     
-    // Engine eng;
+    Engine eng;
 
-    // eng.submitOrder(Buy, 100, 30);
-    // eng.submitOrder(Sell, 105, 80);
-    // eng.submitOrder(Sell, 100, 50);
-    // eng.submitOrder(Buy, 110, 100);
+    eng.submitOrder(Buy, 100, 500);
+    eng.submitOrder(Buy, 100, 300);
+    eng.submitOrder(Buy, 105, 200);
+    eng.submitOrder(Buy, 105, 200);
+    eng.submitOrder(Buy, 99, 100);
 
-    // eng.submitOrder(Buy, 100, 50);
-    // eng.submitOrder(Buy, 100, 75);
-    // eng.submitOrder(Sell, 150, 50);
-    // eng.changeOrder("B3", 150, 50);
-    // eng.printBook();
+    eng.submitOrder(Sell, 100, 300);
+    eng.submitOrder(Sell, 100, 500);
+    eng.submitOrder(Sell, 105, 500);
+    eng.submitOrder(Sell, 98, 200);
 
-    // eng.printTradeHistory();
+    eng.printBook();
     
+    std::cout << eng.getTradeQuantity() << "\n\n";
+
+    std::cout << eng.getNumberOfTrades() << "\n\n";
+
+    std::cout << eng.getAveragePrice() << "\n\n";
+
+    std::cout << eng.getVolumeWeightedAveragePrice() << "\n\n";
+
     return 0;
 }

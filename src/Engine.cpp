@@ -107,6 +107,34 @@ int Engine::getAskLevelCount() const {
 
 }
 
+BookStatistics Engine::getBookStatistics() const {
+
+    BookStatistics stats;
+
+    stats.bestBid = getBestBid();
+    stats.bestAsk = getBestAsk();
+    stats.spread = getSpread();
+
+    stats.totalBidQuantity = getTotalBidQuantity();
+    stats.totalAskQuantity = getTotalAskQuantity();
+
+    stats.activeBuyOrders = getActiveBuyOrderCount();
+    stats.activeSellOrders = getActiveSellOrderCount();
+    stats.activeTotalOrders = getActiveOrderCount();
+
+    stats.bidLevelCount = getBidLevelCount();
+    stats.askLevelCount = getAskLevelCount();
+
+    return stats;
+}
+
+void Engine::printBookStatistics() const {
+
+    std::cout << getBookStatistics();
+
+}
+
+
 bool Engine::emptyTradeHistory() const {
 
     return tradeHistory.empty();
@@ -165,10 +193,28 @@ double Engine::getVolumeWeightedAveragePrice() const {
     return priceVolume / totalQuantity;
 }
 
-Order Engine::submitOrder(Side side, double price, int quantity) {
+TradeStatistics Engine::getTradeStatistics() const {
 
-    std::string id;
-    switch (side) {
+    TradeStatistics stats;
+
+    stats.numberOfTrades = getNumberOfTrades();
+    stats.totalQuantity = getTradeQuantity();
+    stats.averagePrice = getAveragePrice();
+    stats.vwap = getVolumeWeightedAveragePrice();
+
+    return stats;
+}
+
+void Engine::printTradeStatistics() const {
+
+    std::cout << getTradeStatistics();
+}
+
+std::string Engine::assignId(Side side) {
+
+        std::string id;
+
+        switch (side) {
         case Side::Buy:
 
             id = "B" + std::to_string(nextBuyId++);
@@ -180,7 +226,16 @@ Order Engine::submitOrder(Side side, double price, int quantity) {
             break;
     }
 
+    return id;
+}
+
+Order Engine::submitOrder(Side side, double price, int quantity) {
+
+    std::string id = assignId(side);
+
     Order order(id, side, price, quantity);
+
+    std::cout << "Order submitted: " << order;
 
     matchOrder(order, book);
 
@@ -188,13 +243,24 @@ Order Engine::submitOrder(Side side, double price, int quantity) {
 
             book.addToBook(order);
 
-            std::cout << "Order submitted: " << order;
-
-            orderIndex[order.getId()] = {order.getSide(), order.getPrice()};
+            orderIndex[order.getId()] = {order.getSide(), order.getPrice().value()};
         }
 
     return order;
 
+}
+
+Order Engine::submitOrder(Side side, int quantity) {
+
+    std::string id = assignId(side);
+
+    Order order(id, side, quantity);
+
+    std::cout << "Order submitted: " << order;
+
+    matchOrder(order, book);
+
+    return order;
 }
 
 void Engine::printBook() const {
@@ -323,7 +389,7 @@ std::optional<Order> Engine::modifyOrderQuantity(const std::string& id, int newQ
         return std::nullopt;
     }
 
-    auto oldPrice = order->getPrice();
+    auto oldPrice = order->getPrice().value();
 
     return modifyOrder(id, oldPrice, newQuantity);;
 }
@@ -364,7 +430,7 @@ std::optional<Order> Engine::modifyOrder(const std::string& id, double newPrice,
 
     }  
 
-    if (updatedOrder.getPrice() != newPrice) {
+    if (updatedOrder.getPrice().value() != newPrice) {
 
         removeOrder(id);
 
@@ -377,7 +443,7 @@ std::optional<Order> Engine::modifyOrder(const std::string& id, double newPrice,
 
             book.addToBook(updatedOrder);
 
-            orderIndex[id] = {updatedOrder.getSide(), updatedOrder.getPrice()};
+            orderIndex[id] = {updatedOrder.getSide(), updatedOrder.getPrice().value()};
         }
 
     } else if (updatedOrder.getQuantity() != newQuantity) {
@@ -532,7 +598,9 @@ void Engine::matchOrder(Order& order, OrderBook& book) {
                 auto it = book.buyBook.begin();
                 Order& bestOrder = it->second.front();
 
-                if (bestOrder.getPrice() < order.getPrice()) {
+                if (order.getOrderType() == OrderType::Limit && 
+                    bestOrder.getPrice().value() < order.getPrice().value()) {
+                    
                     break;
                 }
 
@@ -541,7 +609,7 @@ void Engine::matchOrder(Order& order, OrderBook& book) {
                 Trade trade("T" + std::to_string(nextTradeId++),
                             bestOrder.getId(), 
                             order.getId(), 
-                            bestOrder.getPrice(), 
+                            bestOrder.getPrice().value(), 
                             tradedQuantity);
 
                 tradeHistory.push_back(trade);
@@ -571,7 +639,9 @@ void Engine::matchOrder(Order& order, OrderBook& book) {
                 auto it = book.sellBook.begin();
                 Order& bestOrder = it->second.front();
 
-                if (bestOrder.getPrice() > order.getPrice()) {
+                if (order.getOrderType() == OrderType::Limit && 
+                    bestOrder.getPrice().value() > order.getPrice().value()) {
+
                     break;
                 }
 
@@ -580,7 +650,7 @@ void Engine::matchOrder(Order& order, OrderBook& book) {
                 Trade trade("T" + std::to_string(nextTradeId++),
                             order.getId(), 
                             bestOrder.getId(), 
-                            bestOrder.getPrice(), 
+                            bestOrder.getPrice().value(), 
                             tradedQuantity);
 
                 tradeHistory.push_back(trade);

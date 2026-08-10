@@ -34,11 +34,13 @@ int Trade::getQuantity() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Trade& trade) {
-    os << "TRADE" << "\n"
-        << "TRADE ID: " << trade.getTradeId() << "\n"
-        << "BUY ORDER ID: " << trade.getBuyOrderId() << "\n"
-        << "SELL ORDER ID: " << trade.getSellOrderId() << "\n"
-        << "PRICE: " << trade.getPrice() << "\n"
-        << "QUANTITY: " << trade.getQuantity() << "\n\n";
+
+    os << "TRADE" << "\n";
+    os << "TRADE ID: " << trade.getTradeId() << "\n";
+    os << "BUY ORDER ID: " << trade.getBuyOrderId() << "\n";
+    os << "SELL ORDER ID: " << trade.getSellOrderId() << "\n";
+    os << "PRICE: " << trade.getPrice() << "\n";
+    os << "QUANTITY: " << trade.getQuantity() << "\n\n";
+
     return os;
 }

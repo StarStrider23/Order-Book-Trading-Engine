@@ -6,12 +6,12 @@ void OrderBook::addToBook(const Order& order) {
 
         case Side::Buy:
 
-            buyBook[order.getPrice()].push_back(order);
+            buyBook[order.getPrice().value()].push_back(order);
             break;
 
         case Side::Sell:
 
-            sellBook[order.getPrice()].push_back(order);
+            sellBook[order.getPrice().value()].push_back(order);
             break;
     }
 

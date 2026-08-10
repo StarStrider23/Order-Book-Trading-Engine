@@ -23,6 +23,8 @@ class Engine {
 
         std::vector<Trade> tradeHistory;
 
+        std::string assignId(Side side);
+
         Order* findOrderInDeque(std::deque<Order>& orders, const std::string& id);
 
         const Order* findOrderInDeque(const std::deque<Order>& orders, const std::string& id) const;
@@ -67,6 +69,10 @@ class Engine {
 
         int getAskLevelCount() const;
 
+        BookStatistics getBookStatistics() const;
+
+        void printBookStatistics() const;
+
         //
 
         bool emptyTradeHistory() const;
@@ -81,9 +87,15 @@ class Engine {
 
         double getVolumeWeightedAveragePrice() const;
 
+        TradeStatistics getTradeStatistics() const;
+
+        void printTradeStatistics() const;
+
         //
 
         Order submitOrder(Side side, double price, int quantity);
+
+        Order submitOrder(Side side, int quantity);
 
         void printBook() const;
 

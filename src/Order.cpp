@@ -4,11 +4,23 @@ Order::Order(const std::string& id, Side side, double price, int quantity) :
 
     id(id),
     side(side),
+    orderType(OrderType::Limit),
     price(validatePrice(price)),
     quantity(validateQuantity(quantity))
 
     {   
 }
+
+Order::Order(const std::string& id, Side side, int quantity) :
+
+    id(id),
+    side(side),
+    orderType(OrderType::Market),
+    quantity(validateQuantity(quantity))
+
+    {   
+}
+
 
 double Order::validatePrice(double price) {
 
@@ -35,9 +47,20 @@ std::string Order::getId() const {
 Side Order::getSide() const {
     return side;
 }
+OrderType Order::getOrderType() const {
+    return orderType;
+}
 
-double Order::getPrice() const {
-    return price;
+std::optional<double> Order::getPrice() const {
+    
+    if (!price) {
+
+        return std::nullopt;
+
+    } else {
+
+        return price;
+    }
 }
 
 int Order::getQuantity() const {
@@ -57,6 +80,20 @@ void Order::reduceQuantity(int amount) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Order& order) {
-    os << order.id << " | " << order.side << " | " << order.quantity << " @ " << order.price << "\n\n";
+
+    switch (order.orderType) {
+
+        case OrderType::Limit:
+
+            os << order.orderType << " | " << order.id << " | " << order.side << " | " << order.quantity << " @ " << order.price << "\n\n";
+            break;
+        
+        case OrderType::Market:
+
+            os << order.orderType << " | " << order.id << " | " << order.side << " | " << order.quantity << "\n\n";
+            break;
+
+    }
+    
     return os;
 }

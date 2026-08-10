@@ -16,10 +16,13 @@ class Order {
 
         std::string id;
         Side side;
+        OrderType orderType;
         double price;
         int quantity;
 
         Order(const std::string& id, Side side, double price, int quantity);
+
+        Order(const std::string& id, Side side, int quantity);
 
         static double validatePrice(double price);
 
@@ -37,7 +40,9 @@ class Order {
 
         Side getSide() const;
 
-        double getPrice() const;
+        OrderType getOrderType() const;
+
+        std::optional<double> getPrice() const;
 
         int getQuantity() const;
 

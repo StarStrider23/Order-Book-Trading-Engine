@@ -41,26 +41,19 @@ int main() {
     
     Engine eng;
 
-    eng.submitOrder(Buy, 100, 500);
-    eng.submitOrder(Buy, 100, 300);
-    eng.submitOrder(Buy, 105, 200);
-    eng.submitOrder(Buy, 105, 200);
-    eng.submitOrder(Buy, 99, 100);
+    eng.submitOrder(Sell, 100, 100);
+    eng.submitOrder(Sell, 105, 200);
+    eng.submitOrder(Sell, 110, 100);
 
-    eng.submitOrder(Sell, 100, 300);
-    eng.submitOrder(Sell, 100, 500);
-    eng.submitOrder(Sell, 105, 500);
-    eng.submitOrder(Sell, 98, 200);
+    eng.submitOrder(Buy, 500);
+
+    eng.submitOrder(Buy, 100, 100);
 
     eng.printBook();
-    
-    std::cout << eng.getTradeQuantity() << "\n\n";
 
-    std::cout << eng.getNumberOfTrades() << "\n\n";
+    eng.printBookStatistics();
 
-    std::cout << eng.getAveragePrice() << "\n\n";
-
-    std::cout << eng.getVolumeWeightedAveragePrice() << "\n\n";
+    eng.printTradeStatistics();
 
     return 0;
 }

@@ -7,8 +7,8 @@ featuring price-time priority, limit order handling, dynamic order
 book management, trade execution, order modification, cancellation, 
 and execution history tracking.*/
 
-// Add time?
-// Add stock names?
+// Add timestamps? order submission/addition/modification/cancellation; trade
+// Add order modification history 
 
 /* 
 Any time a .cpp file is changed:
@@ -32,6 +32,9 @@ Once in the build directory:
 
 */
 
+// cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release
+// cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Debug
+
 
 
 constexpr Side Buy = Side::Buy;
@@ -41,19 +44,27 @@ int main() {
     
     Engine eng;
 
-    eng.submitOrder(Sell, 100, 100);
-    eng.submitOrder(Sell, 105, 200);
-    eng.submitOrder(Sell, 110, 100);
+    Order order = eng.submitOrder(Buy, 100, 100);
 
-    eng.submitOrder(Buy, 500);
+    eng.printOrderInformationById(order.getId());
 
-    eng.submitOrder(Buy, 100, 100);
+    Order sell = eng.submitOrder(Sell, 100, 70);
 
-    eng.printBook();
+    eng.printOrderInformationById(order.getId());
 
-    eng.printBookStatistics();
+    Order sell1 = eng.submitOrder(Sell, 100, 30);
 
-    eng.printTradeStatistics();
+    eng.printOrderInformationById(order.getId());
+
+    Order market = eng.submitOrder(Buy, 100);
+
+    eng.printOrderInformationById(market.getId());
+
+    Order sell2 = eng.submitOrder(Sell, 100, 100);
+
+    Order market1 = eng.submitOrder(Buy, 120);
+
+    eng.printOrderInformationById(market1.getId());
 
     return 0;
 }

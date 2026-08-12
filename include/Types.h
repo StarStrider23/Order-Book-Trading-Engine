@@ -1,10 +1,14 @@
 #pragma once
 
 #include <iostream>
+#include <chrono>
+
+using TimePoint = std::chrono::system_clock::time_point;
 
 // Side
 
 enum class Side {
+
     Buy,
     Sell
 };
@@ -14,6 +18,7 @@ std::ostream& operator<<(std::ostream& os, const Side& side);
 // OrderType
 
 enum class OrderType {
+
     Limit, 
     Market
 };
@@ -27,6 +32,40 @@ struct OrderLocation {
     Side side;
     double price;
 };
+
+// Order Status
+
+enum class OrderStatus {
+
+    Active,
+    Filled,
+    PartiallyFilled,
+    Cancelled
+};
+
+// Order Information
+
+struct OrderInformation {
+
+    friend class Engine;
+
+    std::string id;
+    OrderStatus status;
+    OrderType orderType;
+    Side side;
+    int quantity;
+    double price;
+    TimePoint submittedAt;
+    std::optional<TimePoint> addedToBookAt;
+    std::optional<TimePoint> modifiedAt;
+    std::optional<TimePoint> cancelledAt;
+
+    private:
+
+        void setStatus(OrderStatus orderStatus);
+};
+
+std::ostream& operator<<(std::ostream& os, const OrderInformation& orderInforamtion);
 
 // BookStatistics
 

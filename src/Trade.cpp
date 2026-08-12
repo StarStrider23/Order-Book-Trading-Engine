@@ -9,7 +9,8 @@ Trade::Trade(const std::string& tradeId,
     buyOrderId(buyOrderId),
     sellOrderId(sellOrderId),
     tradePrice(tradePrice),
-    tradeQuantity(tradeQuantity)
+    tradeQuantity(tradeQuantity),
+    tradedAt(std::chrono::system_clock::now())
     {
 }
 
@@ -33,9 +34,16 @@ int Trade::getQuantity() const {
     return tradeQuantity;
 }
 
+TimePoint Trade::getTradeTime() const {
+    return tradedAt;
+}
+
 std::ostream& operator<<(std::ostream& os, const Trade& trade) {
 
+    auto time = std::chrono::system_clock::to_time_t(trade.getTradeTime());
+
     os << "TRADE" << "\n";
+    os << "TRADE TIME: " << std::put_time(std::localtime(&time), "%H:%M:%S") << "\n";
     os << "TRADE ID: " << trade.getTradeId() << "\n";
     os << "BUY ORDER ID: " << trade.getBuyOrderId() << "\n";
     os << "SELL ORDER ID: " << trade.getSellOrderId() << "\n";

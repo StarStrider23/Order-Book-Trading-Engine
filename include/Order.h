@@ -4,6 +4,12 @@
 
 #include <iostream>
 #include <string>
+#include <chrono>
+#include <iomanip>
+#include <ctime>
+
+using TimePoint = std::chrono::system_clock::time_point;
+
 
 class Order {
 
@@ -19,6 +25,10 @@ class Order {
         OrderType orderType;
         double price;
         int quantity;
+        TimePoint submittedAt;
+        std::optional<TimePoint> addedToBookAt;
+        std::optional<TimePoint> modifiedAt;
+        std::optional<TimePoint> cancelledAt;
 
         Order(const std::string& id, Side side, double price, int quantity);
 
@@ -34,6 +44,12 @@ class Order {
 
         void reduceQuantity(int amount);
 
+        void setAddedToBookAt(TimePoint timestamp);
+
+        void setModifiedAt(TimePoint timstamp);
+
+        void setCancelledAt(TimePoint timstamp);
+
     public:
 
         std::string getId() const;
@@ -46,5 +62,14 @@ class Order {
 
         int getQuantity() const;
 
+        TimePoint getSubmittedAt() const;
+
+        std::optional<TimePoint> getAddedToBookAt() const;
+
+        std::optional<TimePoint> getModifiedAt() const;
+
+        std::optional<TimePoint> getCancelledAt() const;
+
+        OrderInformation getOrderInformation() const;
 
 };

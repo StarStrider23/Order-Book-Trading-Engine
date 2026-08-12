@@ -1,0 +1,74 @@
+[
+{
+  "directory": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release",
+  "command": "/usr/bin/c++  -I/Users/alex/VisualStudioCode/C++/TradingEngine/include -O3 -DNDEBUG -std=gnu++17 -arch arm64 -Wall -Wextra -Wpedantic -o CMakeFiles/TradingEngine.dir/src/Engine.cpp.o -c /Users/alex/VisualStudioCode/C++/TradingEngine/src/Engine.cpp",
+  "file": "/Users/alex/VisualStudioCode/C++/TradingEngine/src/Engine.cpp",
+  "output": "CMakeFiles/TradingEngine.dir/src/Engine.cpp.o"
+},
+{
+  "directory": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release",
+  "command": "/usr/bin/c++  -I/Users/alex/VisualStudioCode/C++/TradingEngine/include -O3 -DNDEBUG -std=gnu++17 -arch arm64 -Wall -Wextra -Wpedantic -o CMakeFiles/TradingEngine.dir/src/Order.cpp.o -c /Users/alex/VisualStudioCode/C++/TradingEngine/src/Order.cpp",
+  "file": "/Users/alex/VisualStudioCode/C++/TradingEngine/src/Order.cpp",
+  "output": "CMakeFiles/TradingEngine.dir/src/Order.cpp.o"
+},
+{
+  "directory": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release",
+  "command": "/usr/bin/c++  -I/Users/alex/VisualStudioCode/C++/TradingEngine/include -O3 -DNDEBUG -std=gnu++17 -arch arm64 -Wall -Wextra -Wpedantic -o CMakeFiles/TradingEngine.dir/src/OrderBook.cpp.o -c /Users/alex/VisualStudioCode/C++/TradingEngine/src/OrderBook.cpp",
+  "file": "/Users/alex/VisualStudioCode/C++/TradingEngine/src/OrderBook.cpp",
+  "output": "CMakeFiles/TradingEngine.dir/src/OrderBook.cpp.o"
+},
+{
+  "directory": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release",
+  "command": "/usr/bin/c++  -I/Users/alex/VisualStudioCode/C++/TradingEngine/include -O3 -DNDEBUG -std=gnu++17 -arch arm64 -Wall -Wextra -Wpedantic -o CMakeFiles/TradingEngine.dir/src/Trade.cpp.o -c /Users/alex/VisualStudioCode/C++/TradingEngine/src/Trade.cpp",
+  "file": "/Users/alex/VisualStudioCode/C++/TradingEngine/src/Trade.cpp",
+  "output": "CMakeFiles/TradingEngine.dir/src/Trade.cpp.o"
+},
+{
+  "directory": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release",
+  "command": "/usr/bin/c++  -I/Users/alex/VisualStudioCode/C++/TradingEngine/include -O3 -DNDEBUG -std=gnu++17 -arch arm64 -Wall -Wextra -Wpedantic -o CMakeFiles/TradingEngine.dir/src/Types.cpp.o -c /Users/alex/VisualStudioCode/C++/TradingEngine/src/Types.cpp",
+  "file": "/Users/alex/VisualStudioCode/C++/TradingEngine/src/Types.cpp",
+  "output": "CMakeFiles/TradingEngine.dir/src/Types.cpp.o"
+},
+{
+  "directory": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release",
+  "command": "/usr/bin/c++  -I/Users/alex/VisualStudioCode/C++/TradingEngine/include -O3 -DNDEBUG -std=gnu++17 -arch arm64 -o CMakeFiles/TradingApp.dir/app/main.cpp.o -c /Users/alex/VisualStudioCode/C++/TradingEngine/app/main.cpp",
+  "file": "/Users/alex/VisualStudioCode/C++/TradingEngine/app/main.cpp",
+  "output": "CMakeFiles/TradingApp.dir/app/main.cpp.o"
+},
+{
+  "directory": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release",
+  "command": "/usr/bin/c++  -I/Users/alex/VisualStudioCode/C++/TradingEngine/include -isystem /Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googletest/include -isystem /Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googletest -O3 -DNDEBUG -std=gnu++17 -arch arm64 -o CMakeFiles/EngineTests.dir/tests/EngineTests.cpp.o -c /Users/alex/VisualStudioCode/C++/TradingEngine/tests/EngineTests.cpp",
+  "file": "/Users/alex/VisualStudioCode/C++/TradingEngine/tests/EngineTests.cpp",
+  "output": "CMakeFiles/EngineTests.dir/tests/EngineTests.cpp.o"
+},
+{
+  "directory": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release",
+  "command": "/usr/bin/c++  -I/Users/alex/VisualStudioCode/C++/TradingEngine/include -O3 -DNDEBUG -std=gnu++17 -arch arm64 -o CMakeFiles/EngineBenchmark.dir/benchmark/Benchmark.cpp.o -c /Users/alex/VisualStudioCode/C++/TradingEngine/benchmark/Benchmark.cpp",
+  "file": "/Users/alex/VisualStudioCode/C++/TradingEngine/benchmark/Benchmark.cpp",
+  "output": "CMakeFiles/EngineBenchmark.dir/benchmark/Benchmark.cpp.o"
+},
+{
+  "directory": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-build/googlemock",
+  "command": "/usr/bin/c++  -I/Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googlemock/include -I/Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googlemock -isystem /Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googletest/include -isystem /Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googletest -O3 -DNDEBUG -std=c++17 -arch arm64  -DGTEST_HAS_PTHREAD=1   -o CMakeFiles/gmock.dir/src/gmock-all.cc.o -c /Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googlemock/src/gmock-all.cc",
+  "file": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googlemock/src/gmock-all.cc",
+  "output": "_deps/googletest-build/googlemock/CMakeFiles/gmock.dir/src/gmock-all.cc.o"
+},
+{
+  "directory": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-build/googlemock",
+  "command": "/usr/bin/c++  -isystem /Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googlemock/include -isystem /Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googlemock -isystem /Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googletest/include -isystem /Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googletest -O3 -DNDEBUG -std=c++17 -arch arm64  -DGTEST_HAS_PTHREAD=1   -o CMakeFiles/gmock_main.dir/src/gmock_main.cc.o -c /Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googlemock/src/gmock_main.cc",
+  "file": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googlemock/src/gmock_main.cc",
+  "output": "_deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/src/gmock_main.cc.o"
+},
+{
+  "directory": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-build/googletest",
+  "command": "/usr/bin/c++  -I/Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googletest/include -I/Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googletest -O3 -DNDEBUG -std=c++17 -arch arm64  -DGTEST_HAS_PTHREAD=1   -o CMakeFiles/gtest.dir/src/gtest-all.cc.o -c /Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googletest/src/gtest-all.cc",
+  "file": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googletest/src/gtest-all.cc",
+  "output": "_deps/googletest-build/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.o"
+},
+{
+  "directory": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-build/googletest",
+  "command": "/usr/bin/c++  -isystem /Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googletest/include -isystem /Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googletest -O3 -DNDEBUG -std=c++17 -arch arm64  -DGTEST_HAS_PTHREAD=1   -o CMakeFiles/gtest_main.dir/src/gtest_main.cc.o -c /Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googletest/src/gtest_main.cc",
+  "file": "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release/_deps/googletest-src/googletest/src/gtest_main.cc",
+  "output": "_deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o"
+}
+]

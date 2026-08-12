@@ -2,6 +2,11 @@
 
 #include <iostream>
 #include <string>
+#include <chrono>
+#include <iomanip>
+#include <ctime>
+
+using TimePoint = std::chrono::system_clock::time_point;
 
 class Trade {
 
@@ -15,6 +20,7 @@ class Trade {
         std::string sellOrderId;
         double tradePrice;
         int tradeQuantity;
+        TimePoint tradedAt;
 
         Trade(const std::string& tradeId, 
                 const std::string& buyOrderId, 
@@ -33,5 +39,7 @@ class Trade {
         double getPrice() const;
 
         int getQuantity() const;
+
+        TimePoint getTradeTime() const;
 
 };

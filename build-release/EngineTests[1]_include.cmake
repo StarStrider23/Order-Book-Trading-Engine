@@ -1,0 +1,5 @@
+if(EXISTS "/Users/alex/VisualStudioCode/C++/TradingEngine/build-release/EngineTests[1]_tests.cmake")
+  include("/Users/alex/VisualStudioCode/C++/TradingEngine/build-release/EngineTests[1]_tests.cmake")
+else()
+  add_test(EngineTests_NOT_BUILT EngineTests_NOT_BUILT)
+endif()

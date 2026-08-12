@@ -43,6 +43,10 @@ add_executable(EngineTests tests/EngineTests.cpp)
 
 target_link_libraries(EngineTests PRIVATE ${PROJECT_NAME} GTest::gtest_main)
 
+add_executable(EngineBenchmark benchmark/Benchmark.cpp)
+
+target_link_libraries(EngineBenchmark TradingEngine)
+
 include(GoogleTest)
 
 gtest_discover_tests(EngineTests)

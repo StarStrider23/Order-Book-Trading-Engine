@@ -1,7 +1,9 @@
 #include "Types.h"
 
 #include <iostream>
+#include <chrono>
 #include <iomanip>
+#include <ctime>
 
 // Side
 
@@ -42,6 +44,103 @@ std::ostream& operator<<(std::ostream& os, const OrderType& orderType) {
 
     return os;
 }
+
+// Order Status
+
+std::ostream& operator<<(std::ostream& os, const OrderStatus& orderStatus) {
+
+    switch (orderStatus) {
+
+        case OrderStatus::Active:
+
+            os << "ACTIVE";
+            break;
+
+        case OrderStatus::Filled:
+
+            os << "FILLED";
+            break;
+
+        case OrderStatus::PartiallyFilled:
+
+            os << "PARTIALLY FILLED";
+            break;
+
+        case OrderStatus::Cancelled:
+
+            os << "CANCELLED";
+            break;
+    }
+
+    return os;
+}
+
+// Order Information
+
+void OrderInformation::setStatus(OrderStatus orderStatus) {
+
+    status = orderStatus;
+}
+
+std::ostream& operator<<(std::ostream& os, const OrderInformation& orderInformation) {
+
+    os << "ORDER INFORMATION" << "\n\n";
+
+    os << "ID: " << orderInformation.id << "\n";
+    os << "-----------------------------" << "\n";
+    os << "STATUS: " << orderInformation.status << "\n";
+    os << "TYPE: " << orderInformation.orderType << "\n";
+    os << "SIDE: " << orderInformation.side << "\n";
+    os << "QUANTITY: " << orderInformation.quantity << "\n";
+    os << "PRICE: " << orderInformation.price << "\n";
+
+    auto timeSubmitted = std::chrono::system_clock::to_time_t(orderInformation.submittedAt);
+
+    os << "SUBMITTED: " << std::put_time(std::localtime(&timeSubmitted), "%H:%M:%S") << "\n";
+
+    os << "ADDED: ";
+
+    if (orderInformation.addedToBookAt) {
+
+        auto timeAddedToBook = std::chrono::system_clock::to_time_t(*orderInformation.addedToBookAt);
+
+        os << std::put_time(std::localtime(&timeAddedToBook), "%H:%M:%S") << "\n";
+
+    } else {
+
+        os << "N/A" << "\n";
+    }
+
+    os << "MODIFIED: ";
+
+    if (orderInformation.modifiedAt) {
+
+        auto timeModified = std::chrono::system_clock::to_time_t(*orderInformation.modifiedAt);
+
+        os << std::put_time(std::localtime(&timeModified), "%H:%M:%S") << "\n";
+
+    } else {
+
+        os << "N/A" << "\n";
+    }
+
+    os << "CANCELLED: ";
+
+    if (orderInformation.cancelledAt) {
+
+        auto timeCancelled = std::chrono::system_clock::to_time_t(*orderInformation.cancelledAt);
+
+        os << std::put_time(std::localtime(&timeCancelled), "%H:%M:%S") << "\n\n";
+
+    } else {
+
+        os << "N/A" << "\n\n";
+    }
+
+    return os;
+}
+
+// Order Modification History
 
 // BookStatistics
 

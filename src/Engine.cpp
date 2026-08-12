@@ -1,9 +1,18 @@
 #include "Engine.h"
 
+// Empty methods
+
 bool Engine::emptyOrderBook() const {
 
     return book.buyBook.empty() && book.sellBook.empty();
 }
+
+bool Engine::emptyTradeHistory() const {
+
+    return tradeHistory.empty();
+}
+
+// Book Statistics
 
 std::optional<double> Engine::getBestBid() const {
 
@@ -134,11 +143,7 @@ void Engine::printBookStatistics() const {
 
 }
 
-
-bool Engine::emptyTradeHistory() const {
-
-    return tradeHistory.empty();
-}
+// Trade Statistics
 
 int Engine::getTradeQuantity() const {
 
@@ -210,6 +215,71 @@ void Engine::printTradeStatistics() const {
     std::cout << getTradeStatistics();
 }
 
+// Order Submission (Limit & Market)
+
+Order Engine::submitOrder(Side side, double price, int quantity) {
+
+    std::string id = assignId(side);
+
+    Order order(id, side, price, quantity);
+
+    orderInformation[order.getId()] = order.getOrderInformation();
+
+    std::cout << "Order submitted: " << order;
+
+    matchOrder(order, book);
+
+    if (order.getQuantity() > 0) {
+
+        order.setAddedToBookAt(std::chrono::system_clock::now());
+
+        book.addToBook(order);
+
+        orderIndex[order.getId()] = {order.getSide(), order.getPrice().value()};
+
+        orderInformation[order.getId()] = order.getOrderInformation();
+        orderInformation[order.getId()].setStatus(OrderStatus::Active);
+    } else {
+
+        orderInformation[order.getId()].setStatus(OrderStatus::Filled);
+    }
+
+    return order;
+
+}
+
+Order Engine::submitOrder(Side side, int quantity) {
+
+    std::string id = assignId(side);
+
+    Order order(id, side, quantity);
+
+    orderInformation[order.getId()] = order.getOrderInformation();
+
+    orderInformation[order.getId()].setStatus(OrderStatus::Active);
+
+    std::cout << "Order submitted: " << order;
+
+    int initialQuantity = order.getQuantity();
+
+    matchOrder(order, book);
+
+    if (order.getQuantity() == initialQuantity) {
+
+        orderInformation[order.getId()].setStatus(OrderStatus::Cancelled);
+    } else if (order.getQuantity() == 0) {
+
+        orderInformation[order.getId()].setStatus(OrderStatus::Filled);
+    } else {
+
+        orderInformation[order.getId()].setStatus(OrderStatus::PartiallyFilled);
+    }
+
+    return order;
+}
+
+// Assigning ID
+
 std::string Engine::assignId(Side side) {
 
         std::string id;
@@ -229,43 +299,13 @@ std::string Engine::assignId(Side side) {
     return id;
 }
 
-Order Engine::submitOrder(Side side, double price, int quantity) {
-
-    std::string id = assignId(side);
-
-    Order order(id, side, price, quantity);
-
-    std::cout << "Order submitted: " << order;
-
-    matchOrder(order, book);
-
-        if (order.getQuantity() > 0) {
-
-            book.addToBook(order);
-
-            orderIndex[order.getId()] = {order.getSide(), order.getPrice().value()};
-        }
-
-    return order;
-
-}
-
-Order Engine::submitOrder(Side side, int quantity) {
-
-    std::string id = assignId(side);
-
-    Order order(id, side, quantity);
-
-    std::cout << "Order submitted: " << order;
-
-    matchOrder(order, book);
-
-    return order;
-}
+// Print Order Book
 
 void Engine::printBook() const {
     book.printBook();
 }
+
+// Find Order By ID
 
 Order* Engine::findOrderInDeque(std::deque<Order>& orders, const std::string& id) {
 
@@ -368,6 +408,8 @@ void Engine::displayOrderById(const std::string& id) const {
     }
 }
 
+// Order Modification
+
 std::optional<Order> Engine::modifyOrderPrice(const std::string& id, double newPrice) {
 
     auto order = findOrderById(id);
@@ -406,7 +448,7 @@ std::optional<Order> Engine::modifyOrder(const std::string& id, double newPrice,
         return *order;
     }
 
-    Order updatedOrder = *order;
+
 
     try {
 
@@ -428,7 +470,11 @@ std::optional<Order> Engine::modifyOrder(const std::string& id, double newPrice,
         std::cout << inv.what() << "\n\n";
         return *order;
 
-    }  
+    } 
+    
+    Order updatedOrder = *order;
+
+    updatedOrder.setModifiedAt(std::chrono::system_clock::now());
 
     if (updatedOrder.getPrice().value() != newPrice) {
 
@@ -494,16 +540,21 @@ void Engine::changeOrder(const std::string& id, double price, int quantity) {
 
 }
 
-void Engine::removeOrderFromDeque(std::deque<Order>& orders, const std::string& id) {
+// Order Removal & Cancellation
+
+std::optional<Order> Engine::removeOrderFromDeque(std::deque<Order>& orders, const std::string& id) {
 
     for (auto it = orders.begin(); it != orders.end(); it++) {
 
         if (it->getId() == id) {
 
+            Order removedOrder = *it;
             orders.erase(it);
-            return;
+            return removedOrder;
         }
     }
+
+    return std::nullopt;
 }
 
 void Engine::removeOrder(const std::string& id) {
@@ -521,7 +572,14 @@ void Engine::removeOrder(const std::string& id) {
 
         auto& orders = book.buyBook[location.price];
 
-        removeOrderFromDeque(orders, id);
+        std::optional<Order> cancelledOrder = removeOrderFromDeque(orders, id);
+
+        if (cancelledOrder) {
+
+            cancelledOrder->setCancelledAt(std::chrono::system_clock::now());
+
+            orderInformation[cancelledOrder->getId()].setStatus(OrderStatus::Cancelled);
+        }
 
         if (orders.empty()) {
             book.buyBook.erase(location.price);
@@ -531,7 +589,14 @@ void Engine::removeOrder(const std::string& id) {
 
         auto& orders = book.sellBook[location.price];
 
-        removeOrderFromDeque(orders, id);
+        std::optional<Order> cancelledOrder = removeOrderFromDeque(orders, id);
+
+        if (cancelledOrder) {
+
+            cancelledOrder->setCancelledAt(std::chrono::system_clock::now());
+
+            orderInformation[cancelledOrder->getId()].setStatus(OrderStatus::Cancelled);
+        }
 
         if (orders.empty()) {
             book.sellBook.erase(location.price);
@@ -549,6 +614,28 @@ void Engine::cancelOrder(const std::string& id) {
 
 }
 
+// Order Information
+
+void Engine::printOrderInformationById(const std::string& id) const {
+
+    auto it = orderInformation.find(id);
+
+    if (it != orderInformation.end()) {
+
+        std::cout << it->second;
+    } else {
+
+        std::cout << "Order with ID " << id << " not found" << "\n\n";
+    }
+
+} 
+
+OrderInformation Engine::getOrderInformation(const std::string& id) const {
+
+    return orderInformation.at(id);
+}
+
+// Trade
 
 const Trade* Engine::findTradeByTradeId(const std::string& tradeId) const {
 
@@ -587,6 +674,14 @@ void Engine::displayTradeById(const std::string& id) const {
     }
 }
 
+void Engine::printTradeHistory() const {
+    for (const Trade& trade : tradeHistory) {
+        std::cout << trade;
+    }
+}
+
+// Order Matching
+
 void Engine::matchOrder(Order& order, OrderBook& book) {
 
     switch (order.getSide()) {
@@ -622,6 +717,8 @@ void Engine::matchOrder(Order& order, OrderBook& book) {
                 if (bestOrder.getQuantity() == 0) {
 
                     it->second.pop_front();
+
+                    orderInformation[bestOrder.getId()].setStatus(OrderStatus::Filled);
 
                     if (it->second.empty()) {
 
@@ -666,6 +763,8 @@ void Engine::matchOrder(Order& order, OrderBook& book) {
 
                     if (it->second.empty()) {
 
+                        orderInformation[bestOrder.getId()].setStatus(OrderStatus::Filled);
+
                         book.sellBook.erase(it);
                     }
                 }
@@ -674,10 +773,4 @@ void Engine::matchOrder(Order& order, OrderBook& book) {
             break;
     }
 
-}
-
-void Engine::printTradeHistory() const {
-    for (const Trade& trade : tradeHistory) {
-        std::cout << trade;
-    }
 }

@@ -21,6 +21,8 @@ class Engine {
 
         std::unordered_map<std::string, OrderLocation> orderIndex;
 
+        std::unordered_map<std::string, OrderInformation> orderInformation;
+
         std::vector<Trade> tradeHistory;
 
         std::string assignId(Side side);
@@ -35,7 +37,7 @@ class Engine {
 
         std::optional<Order> modifyOrderQuantity(const std::string& id, int newQuantity);
 
-        void removeOrderFromDeque(std::deque<Order>& orders, const std::string& id);
+        std::optional<Order> removeOrderFromDeque(std::deque<Order>& orders, const std::string& id);
 
         void removeOrder(const std::string& id);
 
@@ -115,7 +117,12 @@ class Engine {
 
         void cancelOrder(const std::string& id);
 
+        void printOrderInformationById(const std::string& id) const;
+
         void displayTradeById(const std::string& tradeId) const;
 
         void printTradeHistory() const;
+
+        OrderInformation getOrderInformation(const std::string& id) const;
+
 };

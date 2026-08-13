@@ -55,7 +55,7 @@ int Engine::getTotalBidQuantity() const {
 
         for (const Order& order : orders) {
 
-            totalBidQuantity += order.getQuantity();
+            totalBidQuantity += order.getOriginalQuantity();
         }
     }
     return totalBidQuantity;
@@ -69,7 +69,7 @@ int Engine::getTotalAskQuantity() const {
 
         for (const Order& order : orders) {
 
-            totalAskQuantity += order.getQuantity();
+            totalAskQuantity += order.getOriginalQuantity();
         }
     }
     return totalAskQuantity;
@@ -225,22 +225,24 @@ Order Engine::submitOrder(Side side, double price, int quantity) {
 
     orderInformation[order.getId()] = order.getOrderInformation();
 
+    orderInformation[order.getId()].setStatus(OrderStatus::Active);
+
     std::cout << "Order submitted: " << order;
 
     matchOrder(order, book);
 
-    if (order.getQuantity() > 0) {
+    if (order.getRemainingQuantity() > 0) {
 
         order.setAddedToBookAt(std::chrono::system_clock::now());
 
         book.addToBook(order);
 
         orderIndex[order.getId()] = {order.getSide(), order.getPrice().value()};
-
-        orderInformation[order.getId()] = order.getOrderInformation();
         orderInformation[order.getId()].setStatus(OrderStatus::Active);
+
     } else {
 
+        orderIndex[order.getId()] = {order.getSide(), order.getPrice().value()};
         orderInformation[order.getId()].setStatus(OrderStatus::Filled);
     }
 
@@ -260,20 +262,19 @@ Order Engine::submitOrder(Side side, int quantity) {
 
     std::cout << "Order submitted: " << order;
 
-    int initialQuantity = order.getQuantity();
-
     matchOrder(order, book);
 
-    if (order.getQuantity() == initialQuantity) {
-
-        orderInformation[order.getId()].setStatus(OrderStatus::Cancelled);
-    } else if (order.getQuantity() == 0) {
+    if (order.getRemainingQuantity() == 0) {
 
         orderInformation[order.getId()].setStatus(OrderStatus::Filled);
-    } else {
+    } else if (order.getFilledQuantity() > 0) {
 
         orderInformation[order.getId()].setStatus(OrderStatus::PartiallyFilled);
+    } else if (order.getRemainingQuantity() > 0 && order.getFilledQuantity() == 0) {
+
+        orderInformation[order.getId()].setStatus(OrderStatus::Cancelled);
     }
+
 
     return order;
 }
@@ -418,7 +419,7 @@ std::optional<Order> Engine::modifyOrderPrice(const std::string& id, double newP
         return std::nullopt;
     }
 
-    auto oldQuantity = order->getQuantity();
+    auto oldQuantity = order->getOriginalQuantity();
     
     return modifyOrder(id, newPrice, oldQuantity);
 }
@@ -444,11 +445,9 @@ std::optional<Order> Engine::modifyOrder(const std::string& id, double newPrice,
         return std::nullopt;
     }
 
-    if (order->getPrice() == newPrice && order->getQuantity() == newQuantity) {
+    if (order->getPrice() == newPrice && order->getRemainingQuantity() == newQuantity) {
         return *order;
     }
-
-
 
     try {
 
@@ -458,7 +457,6 @@ std::optional<Order> Engine::modifyOrder(const std::string& id, double newPrice,
         
         std::cout << inv.what() << "\n\n";
         return *order;
-    
     }
 
     try {
@@ -474,28 +472,43 @@ std::optional<Order> Engine::modifyOrder(const std::string& id, double newPrice,
     
     Order updatedOrder = *order;
 
-    updatedOrder.setModifiedAt(std::chrono::system_clock::now());
+    const auto oldPrice = order->getPrice();
+    const int oldQuantity = order->getRemainingQuantity();
+
+    const auto modificationTime = std::chrono::system_clock::now();
+
+    updatedOrder.setModifiedAt(modificationTime);
+
+    orderInformation[id].addModification(modificationTime, oldQuantity, newQuantity,
+                                                oldPrice, newPrice);
+
+    orderInformation[id].setPrice(newPrice);
+    orderInformation[id].setOriginalQuantity(newQuantity);
+    orderInformation[id].setRemainingQuantity(newQuantity);
+    orderInformation[id].setModifiedAt(modificationTime);
 
     if (updatedOrder.getPrice().value() != newPrice) {
 
         removeOrder(id);
 
+        updatedOrder.setRemainingQuantity(newQuantity);
         updatedOrder.setQuantity(newQuantity);
         updatedOrder.setPrice(newPrice);
 
         matchOrder(updatedOrder, book);
 
-        if (updatedOrder.getQuantity() > 0) {
+        if (updatedOrder.getRemainingQuantity() > 0) {
 
             book.addToBook(updatedOrder);
 
             orderIndex[id] = {updatedOrder.getSide(), updatedOrder.getPrice().value()};
         }
 
-    } else if (updatedOrder.getQuantity() != newQuantity) {
+    } else if (updatedOrder.getRemainingQuantity() != newQuantity) {
 
         removeOrder(id);
 
+        updatedOrder.setRemainingQuantity(newQuantity);
         updatedOrder.setQuantity(newQuantity);
 
         book.addToBook(updatedOrder);
@@ -537,6 +550,38 @@ void Engine::changeOrder(const std::string& id, double price, int quantity) {
         std::cout << "Order with ID " << id << " not found." << "\n\n";
     }
 
+
+}
+
+// Order Modification
+
+const std::vector<OrderModification>& Engine::getOrderModificationHistory(const std::string& id) const {
+    return orderInformation.at(id).getModificationHistory();
+}
+
+void Engine::printOrderModificationHistoryById(const std::string& id) const {
+
+    auto it = orderInformation.find(id);
+
+    if (it == orderInformation.end()) {
+        std::cout << "Order with ID " << id << " not found.\n\n";
+        return;
+    }
+
+    const auto& history = it->second.getModificationHistory();
+
+    std::cout << "MODIFICATION HISTORY" << "\n\n";
+
+    if (history.empty()) {
+        std::cout << "No modifications." << "\n\n";
+        return;
+    }
+
+    for (const auto& modification : history) {
+        std::cout << modification << '\n';
+    }
+
+    std::cout << '\n';
 
 }
 
@@ -610,7 +655,7 @@ void Engine::cancelOrder(const std::string& id) {
 
     removeOrder(id);
 
-    std::cout << "Order with ID" << id << " canceled." << "\n\n";
+    std::cout << "Order with ID " << id << " canceled." << "\n\n";
 
 }
 
@@ -623,9 +668,6 @@ void Engine::printOrderInformationById(const std::string& id) const {
     if (it != orderInformation.end()) {
 
         std::cout << it->second;
-    } else {
-
-        std::cout << "Order with ID " << id << " not found" << "\n\n";
     }
 
 } 
@@ -688,7 +730,7 @@ void Engine::matchOrder(Order& order, OrderBook& book) {
 
         case Side::Sell:
 
-            while (!book.buyBook.empty() && order.getQuantity() > 0) {
+            while (!book.buyBook.empty() && order.getRemainingQuantity() > 0) {
 
                 auto it = book.buyBook.begin();
                 Order& bestOrder = it->second.front();
@@ -699,7 +741,7 @@ void Engine::matchOrder(Order& order, OrderBook& book) {
                     break;
                 }
 
-                int tradedQuantity = std::min(bestOrder.getQuantity(), order.getQuantity());
+                int tradedQuantity = std::min(bestOrder.getRemainingQuantity(), order.getRemainingQuantity());
                 
                 Trade trade("T" + std::to_string(nextTradeId++),
                             bestOrder.getId(), 
@@ -710,11 +752,28 @@ void Engine::matchOrder(Order& order, OrderBook& book) {
                 tradeHistory.push_back(trade);
 
                 std::cout << trade;
-                
-                order.reduceQuantity(tradedQuantity);
-                bestOrder.reduceQuantity(tradedQuantity);
 
-                if (bestOrder.getQuantity() == 0) {
+                order.updateAverageExecution(trade.getPrice(), tradedQuantity);
+
+                order.updateQuantity(tradedQuantity);
+
+                auto& info = orderInformation[order.getId()];
+
+                info.setFilledQuantity(order.getFilledQuantity());
+                info.setRemainingQuantity(order.getRemainingQuantity());
+                info.setAverageExecution(order.getAverageExecution().value());
+
+                bestOrder.updateAverageExecution(trade.getPrice(), tradedQuantity);
+
+                bestOrder.updateQuantity(tradedQuantity);
+
+                auto& bestInfo = orderInformation[bestOrder.getId()];
+
+                bestInfo.setFilledQuantity(bestOrder.getFilledQuantity());
+                bestInfo.setRemainingQuantity(bestOrder.getRemainingQuantity());
+                bestInfo.setAverageExecution(bestOrder.getAverageExecution().value());
+
+                if (bestOrder.getRemainingQuantity() == 0) {
 
                     it->second.pop_front();
 
@@ -724,14 +783,19 @@ void Engine::matchOrder(Order& order, OrderBook& book) {
 
                         book.buyBook.erase(it);
                     }
-                }   
+                }
+                
+                else {
+
+                    orderInformation[bestOrder.getId()].setStatus(OrderStatus::Active);
+                }
             }
 
             break;
         
         case Side::Buy:
 
-            while (!book.sellBook.empty() && order.getQuantity() > 0) {
+            while (!book.sellBook.empty() && order.getRemainingQuantity() > 0) {
 
                 auto it = book.sellBook.begin();
                 Order& bestOrder = it->second.front();
@@ -742,7 +806,7 @@ void Engine::matchOrder(Order& order, OrderBook& book) {
                     break;
                 }
 
-                int tradedQuantity = std::min(bestOrder.getQuantity(), order.getQuantity());
+                int tradedQuantity = std::min(bestOrder.getRemainingQuantity(), order.getRemainingQuantity());
 
                 Trade trade("T" + std::to_string(nextTradeId++),
                             order.getId(), 
@@ -754,19 +818,39 @@ void Engine::matchOrder(Order& order, OrderBook& book) {
 
                 std::cout << trade;
 
-                order.reduceQuantity(tradedQuantity);
-                bestOrder.reduceQuantity(tradedQuantity);
+                order.updateAverageExecution(trade.getPrice(), tradedQuantity);
 
-                if (bestOrder.getQuantity() == 0) {
+                order.updateQuantity(tradedQuantity);
+
+                auto& info = orderInformation[order.getId()];
+
+                info.setFilledQuantity(order.getFilledQuantity());
+                info.setRemainingQuantity(order.getRemainingQuantity());
+                info.setAverageExecution(order.getAverageExecution().value());
+
+                bestOrder.updateAverageExecution(trade.getPrice(), tradedQuantity);
+
+                bestOrder.updateQuantity(tradedQuantity);
+
+                auto& bestInfo = orderInformation[bestOrder.getId()];
+
+                bestInfo.setFilledQuantity(bestOrder.getFilledQuantity());
+                bestInfo.setRemainingQuantity(bestOrder.getRemainingQuantity());
+                bestInfo.setAverageExecution(bestOrder.getAverageExecution().value());
+
+                if (bestOrder.getRemainingQuantity() == 0) {
 
                     it->second.pop_front();
 
-                    if (it->second.empty()) {
+                    orderInformation[bestOrder.getId()].setStatus(OrderStatus::Filled);
 
-                        orderInformation[bestOrder.getId()].setStatus(OrderStatus::Filled);
+                    if (it->second.empty()) {
 
                         book.sellBook.erase(it);
                     }
+                } else {
+
+                    orderInformation[bestOrder.getId()].setStatus(OrderStatus::Active);
                 }
             }
 

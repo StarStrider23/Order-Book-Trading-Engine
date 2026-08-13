@@ -23,8 +23,15 @@ class Order {
         std::string id;
         Side side;
         OrderType orderType;
-        double price;
-        int quantity;
+        OrderStatus status;
+
+        std::optional<double> price;
+        std::optional<double> averageExecution;
+
+        int originalQuantity;
+        int filledQuantity;
+        int remainingQuantity;
+
         TimePoint submittedAt;
         std::optional<TimePoint> addedToBookAt;
         std::optional<TimePoint> modifiedAt;
@@ -38,17 +45,25 @@ class Order {
 
         static int validateQuantity(int quantity);
 
-        void setPrice(double new_price);
+        void setPrice(double newPrice);
 
-        void setQuantity(int new_quantity);
+        void setQuantity(int newQuantity);
 
         void reduceQuantity(int amount);
+
+        void setRemainingQuantity(int newQuantity);
+
+        void setAverageExecution(double newAverageExecution);
 
         void setAddedToBookAt(TimePoint timestamp);
 
         void setModifiedAt(TimePoint timstamp);
 
         void setCancelledAt(TimePoint timstamp);
+
+        void updateAverageExecution(double tradePrice, int tradeQuantity);
+
+        void updateQuantity(int tradeQuantity);
 
     public:
 
@@ -60,7 +75,13 @@ class Order {
 
         std::optional<double> getPrice() const;
 
-        int getQuantity() const;
+        std::optional<double> getAverageExecution() const;
+
+        int getOriginalQuantity() const;
+
+        int getFilledQuantity() const;
+
+        int getRemainingQuantity() const;
 
         TimePoint getSubmittedAt() const;
 

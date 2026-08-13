@@ -41,30 +41,13 @@ constexpr Side Buy = Side::Buy;
 constexpr Side Sell = Side::Sell;
 
 int main() {
-    
+
     Engine eng;
 
-    Order order = eng.submitOrder(Buy, 100, 100);
+    Order buy = eng.submitOrder(Side::Buy, 100, 100);
 
-    eng.printOrderInformationById(order.getId());
-
-    Order sell = eng.submitOrder(Sell, 100, 70);
-
-    eng.printOrderInformationById(order.getId());
-
-    Order sell1 = eng.submitOrder(Sell, 100, 30);
-
-    eng.printOrderInformationById(order.getId());
-
-    Order market = eng.submitOrder(Buy, 100);
-
-    eng.printOrderInformationById(market.getId());
-
-    Order sell2 = eng.submitOrder(Sell, 100, 100);
-
-    Order market1 = eng.submitOrder(Buy, 120);
-
-    eng.printOrderInformationById(market1.getId());
+    eng.submitOrder(Side::Sell, 100, 70);
+    eng.submitOrder(Side::Sell, 90, 30);
 
     return 0;
 }

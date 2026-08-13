@@ -4,6 +4,7 @@
 #include <chrono>
 #include <iomanip>
 #include <ctime>
+#include <vector>
 
 // Side
 
@@ -75,11 +76,89 @@ std::ostream& operator<<(std::ostream& os, const OrderStatus& orderStatus) {
     return os;
 }
 
+// Order Modification History
+
+std::ostream& operator<<(std::ostream& os, const OrderModification& orderModification) {
+
+    auto timeModified = std::chrono::system_clock::to_time_t(orderModification.modifiedAt);
+
+    os << std::put_time(std::localtime(&timeModified), "%H:%M:%S") << "\n";
+    os << "PRICE: ";
+
+    if (orderModification.oldPrice) {
+        os << *orderModification.oldPrice;
+    } else {
+        os << "N/A";
+    }
+
+    os << " -> ";
+
+    if (orderModification.newPrice) {
+        os << *orderModification.newPrice << "\n";
+    } else {
+        os << "N/A" << "\n";
+    }
+
+    os << "QUANTITY: " << orderModification.oldQuantity << " -> " << orderModification.newQuantity << "\n";
+
+
+    return os;
+}
+
 // Order Information
+
+const std::vector<OrderModification>& OrderInformation::getModificationHistory() const {
+    return modificationHistory;
+}
+
+const OrderType& OrderInformation::getOrderType() const {
+    return orderType;
+}
+
+const OrderStatus& OrderInformation::getOrderStatus() const {
+    return status;
+}
 
 void OrderInformation::setStatus(OrderStatus orderStatus) {
 
     status = orderStatus;
+}
+
+void OrderInformation::setPrice(double newPrice) {
+
+    price = newPrice;
+}
+
+void OrderInformation::setAverageExecution(double newAverageExecution) {
+
+    averageExecution = newAverageExecution;
+}
+
+void OrderInformation::setOriginalQuantity(int newQuantity) {
+
+    originalQuantity = newQuantity;
+}
+
+void OrderInformation::setFilledQuantity(int newQuantity) {
+
+    filledQuantity = newQuantity;
+}
+
+void OrderInformation::setRemainingQuantity(int newQuantity) {
+
+    remainingQuantity = newQuantity;
+}
+
+void OrderInformation::setModifiedAt(TimePoint time) {
+
+    modifiedAt = time;
+}
+
+void OrderInformation::addModification(TimePoint modifiedAt, const int oldQuantity, 
+    const int newQuantity, std::optional<double> oldPrice, std::optional<double> newPrice) {
+
+    modificationHistory.push_back({modifiedAt, oldQuantity, 
+        newQuantity, oldPrice, newPrice});
 }
 
 std::ostream& operator<<(std::ostream& os, const OrderInformation& orderInformation) {
@@ -91,8 +170,21 @@ std::ostream& operator<<(std::ostream& os, const OrderInformation& orderInformat
     os << "STATUS: " << orderInformation.status << "\n";
     os << "TYPE: " << orderInformation.orderType << "\n";
     os << "SIDE: " << orderInformation.side << "\n";
-    os << "QUANTITY: " << orderInformation.quantity << "\n";
-    os << "PRICE: " << orderInformation.price << "\n";
+    os << "ORIGINAL QUANTITY: " << orderInformation.originalQuantity << "\n";
+    os << "FILLED QUANTITY: " << orderInformation.filledQuantity << "\n";
+    os << "REMAINING QUANTITY: " << orderInformation.remainingQuantity << "\n";
+
+    if (orderInformation.price) {
+        os << "PRICE: " << *orderInformation.price << "\n";
+    } else {
+        os << "PRICE: N/A" << "\n";
+    }
+
+    if (orderInformation.averageExecution) {
+        os << "AVERAGE EXECUTION: " << *orderInformation.averageExecution << "\n";
+    } else {
+        os << "AVERAGE EXECUTION: N/A" << "\n";
+    }
 
     auto timeSubmitted = std::chrono::system_clock::to_time_t(orderInformation.submittedAt);
 
@@ -139,8 +231,6 @@ std::ostream& operator<<(std::ostream& os, const OrderInformation& orderInformat
 
     return os;
 }
-
-// Order Modification History
 
 // BookStatistics
 

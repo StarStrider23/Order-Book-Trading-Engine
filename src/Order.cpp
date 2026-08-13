@@ -5,8 +5,15 @@ Order::Order(const std::string& id, Side side, double price, int quantity) :
     id(id),
     side(side),
     orderType(OrderType::Limit),
+    status(OrderStatus::Active),
+
     price(validatePrice(price)),
-    quantity(validateQuantity(quantity)),
+    averageExecution(std::nullopt),
+
+    originalQuantity(validateQuantity(quantity)),
+    filledQuantity(0),
+    remainingQuantity(originalQuantity),
+
     submittedAt(std::chrono::system_clock::now())
 
     {   
@@ -17,7 +24,14 @@ Order::Order(const std::string& id, Side side, int quantity) :
     id(id),
     side(side),
     orderType(OrderType::Market),
-    quantity(validateQuantity(quantity)),
+    status(OrderStatus::Active),
+
+    averageExecution(std::nullopt),
+
+    originalQuantity(validateQuantity(quantity)),
+    filledQuantity(0),
+    remainingQuantity(originalQuantity),
+
     submittedAt(std::chrono::system_clock::now())
 
     {   
@@ -65,8 +79,28 @@ std::optional<double> Order::getPrice() const {
     }
 }
 
-int Order::getQuantity() const {
-    return quantity;
+std::optional<double> Order::getAverageExecution() const {
+
+    if (!averageExecution) {
+
+        return std::nullopt;
+    
+    } else {
+
+        return averageExecution;
+    }
+}
+
+int Order::getOriginalQuantity() const {
+    return originalQuantity;
+}
+
+int Order::getFilledQuantity() const {
+    return filledQuantity;
+}
+
+int Order::getRemainingQuantity() const {
+    return remainingQuantity;
 }
 
 TimePoint Order::getSubmittedAt() const {
@@ -92,9 +126,15 @@ OrderInformation Order::getOrderInformation() const {
     info.id = id;
 
     info.orderType = orderType;
+    info.status = status;
     info.side = side;
-    info.quantity = quantity;
+
     info.price = price;
+    info.averageExecution = averageExecution;
+
+    info.originalQuantity = originalQuantity;
+    info.filledQuantity = filledQuantity;
+    info.remainingQuantity = remainingQuantity;
 
     info.submittedAt = submittedAt;
     info.addedToBookAt = addedToBookAt;
@@ -104,28 +144,65 @@ OrderInformation Order::getOrderInformation() const {
     return info;
 }
 
-void Order::setPrice(double new_price) {
-    this->price = new_price;
+void Order::setPrice(double newPrice) {
+    this->price = newPrice;
 }
 
-void Order::setQuantity(int new_quantity) {
-    this->quantity = new_quantity;
+void Order::setQuantity(int newQuantity) {
+    this->originalQuantity = newQuantity;
 }
 
 void Order::reduceQuantity(int amount) {
-    this->quantity -= amount;
+    this->originalQuantity -= amount;
+}
+
+void Order::setRemainingQuantity(int newQuantity) {
+    this->remainingQuantity = newQuantity;
+} 
+
+void Order::setAverageExecution(double newAverageExecution) {
+
+    this->averageExecution = newAverageExecution;
 }
 
 void Order::setAddedToBookAt(TimePoint timestamp) {
-    addedToBookAt = timestamp;
+
+    this->addedToBookAt = timestamp;
 }
 
 void Order::setModifiedAt(TimePoint timestamp) {
-    modifiedAt = timestamp;
+    this->modifiedAt = timestamp;
 }
 
 void Order::setCancelledAt(TimePoint timestamp) {
-    cancelledAt = timestamp;
+    this->cancelledAt = timestamp;
+}
+
+void Order::updateAverageExecution(double tradePrice, int tradeQuantity) {
+
+    if (!averageExecution) {
+
+        averageExecution = tradePrice;
+
+    } else {
+
+        double oldAverage = averageExecution.value();
+
+        double newAverage =
+            (oldAverage * filledQuantity
+            + tradePrice * tradeQuantity)
+            / (filledQuantity + tradeQuantity);
+
+        averageExecution = newAverage;
+    }
+
+}
+
+void Order::updateQuantity(int tradeQuantity) {
+
+    filledQuantity += tradeQuantity;
+    remainingQuantity -= tradeQuantity;
+
 }
 
 std::ostream& operator<<(std::ostream& os, const Order& order) {
@@ -139,15 +216,15 @@ std::ostream& operator<<(std::ostream& os, const Order& order) {
 
             os << order.id << " | ";
             os << order.side << " | ";
-            os << order.quantity << " @ ";
-            os << order.price << "\n\n";
+            os << order.remainingQuantity << " @ ";
+            os << order.price.value() << "\n\n";
             break;
 
         case OrderType::Market:
 
             os << order.id << " | ";
             os << order.side << " | ";
-            os << order.quantity << "\n\n";
+            os << order.remainingQuantity << "\n\n";
             break;
     }
 

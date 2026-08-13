@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <vector>
 
 using TimePoint = std::chrono::system_clock::time_point;
 
@@ -43,6 +44,21 @@ enum class OrderStatus {
     Cancelled
 };
 
+// Order Modification History
+
+struct OrderModification {
+
+    TimePoint modifiedAt;
+
+    int oldQuantity;
+    int newQuantity;
+
+    std::optional<double> oldPrice;
+    std::optional<double> newPrice;
+};
+
+std::ostream& operator<<(std::ostream& os, const OrderModification& orderModification);
+
 // Order Information
 
 struct OrderInformation {
@@ -53,16 +69,46 @@ struct OrderInformation {
     OrderStatus status;
     OrderType orderType;
     Side side;
-    int quantity;
-    double price;
+
+    int originalQuantity = 0;
+    int filledQuantity = 0;
+    int remainingQuantity = 0;
+
+    std::optional<double> price;
+    std::optional<double> averageExecution;
+    
     TimePoint submittedAt;
     std::optional<TimePoint> addedToBookAt;
     std::optional<TimePoint> modifiedAt;
     std::optional<TimePoint> cancelledAt;
 
+    std::vector<OrderModification> modificationHistory;
+
+    const OrderType& getOrderType() const;
+
+    const OrderStatus& getOrderStatus() const;
+
+    const std::vector<OrderModification>& getModificationHistory() const;
+
     private:
 
         void setStatus(OrderStatus orderStatus);
+
+        void setPrice(double newPrice);
+
+        void setAverageExecution(double newAverageExecution);
+
+        void setOriginalQuantity(int newQuantity);
+
+        void setFilledQuantity(int newQuantity);
+
+        void setRemainingQuantity(int newQuantity);
+
+        void setModifiedAt(TimePoint time);
+
+        void addModification(TimePoint modifiedAt, int oldQuantity, int newQuantity, 
+            std::optional<double> oldPrice, std::optional<double> newPrice);
+
 };
 
 std::ostream& operator<<(std::ostream& os, const OrderInformation& orderInforamtion);

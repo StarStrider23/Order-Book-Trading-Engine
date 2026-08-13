@@ -115,6 +115,10 @@ class Engine {
 
         void changeOrderQuantity(const std::string& id, int newQuantity);
 
+        const std::vector<OrderModification>& getOrderModificationHistory(const std::string& id) const;
+
+        void printOrderModificationHistoryById(const std::string& id) const;
+
         void cancelOrder(const std::string& id);
 
         void printOrderInformationById(const std::string& id) const;

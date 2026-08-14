@@ -70,7 +70,7 @@ Suppose the order book contains two limit orders:
 
 `15:46:40 | B2 | BUY | 50 @ 99`
 
-To clarify, let's take order with ID `B1`. It was added to the order book at `15:46:37`. It is a `BUY` order with price `100` and quantity `110` (buying 110 shares at/@ 100). Now, let's assume an incoming sell order.
+To clarify, let's take order with ID `B1`. It was added to the order book at `15:46:37`. It is a `BUY` order with price `100` and quantity `110` (it should be read as "buying 110 shares at/@ 100"). Now, let's assume an incoming sell order.
 
 `Order submitted: 15:47:00 | S1 | SELL | 150 @ 100`
 

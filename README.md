@@ -252,8 +252,6 @@ The benchmark was run using a Release build on:
 - Compiler: AppleClang 17.0.0
 - Orders: 100 000 (100K) / 1 000 000 (1M)
 
-Results:
-
 ```text
 100K orders.
 Elapsed: 0.0804477 seconds

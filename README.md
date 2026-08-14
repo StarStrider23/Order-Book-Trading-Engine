@@ -66,7 +66,7 @@ Trades are executed at the resting order's price. In general, an order can be fu
 
 Suppose the order book contains two limit orders:
 
-`15:46:37 | B1 | BUY | 110 @ 10`
+`15:46:37 | B1 | BUY | 110 @ 100`
 
 `15:46:40 | B2 | BUY | 50 @ 99`
 

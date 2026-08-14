@@ -1,14 +1,6 @@
-#include <gtest/gtest.h>
-
 #include "Engine.h"
 
-/*
-
-cmake --build build
-cd build
-ctest
-
-*/
+#include <gtest/gtest.h>
 
 TEST(EngineTest, StartsEmpty) {
 
@@ -36,30 +28,32 @@ TEST(EngineTest, CorrectLimitOrderParameters) {
 
     auto after = std::chrono::system_clock::now();
 
+    Order* orderPtr = eng.findOrderById(order.getId());
+
     ASSERT_EQ(eng.getOrderInformation(order.getId()).getOrderType(), OrderType::Limit);
 
     ASSERT_EQ(eng.getOrderInformation(order.getId()).getOrderStatus(), OrderStatus::Active);
 
-    EXPECT_EQ(order.getId(), "B1");
+    EXPECT_EQ(orderPtr->getId(), "B1");
 
-    EXPECT_EQ(order.getSide(), Side::Buy);
+    EXPECT_EQ(orderPtr->getSide(), Side::Buy);
 
-    EXPECT_EQ(order.getPrice(), 100);
-    EXPECT_EQ(order.getAverageExecution(), std::nullopt);
+    EXPECT_EQ(orderPtr->getPrice(), 100);
+    EXPECT_EQ(orderPtr->getAverageExecution(), std::nullopt);
 
-    EXPECT_EQ(order.getOriginalQuantity(), 100);
-    EXPECT_EQ(order.getFilledQuantity(), 0);
-    EXPECT_EQ(order.getRemainingQuantity(), order.getOriginalQuantity());
+    EXPECT_EQ(orderPtr->getOriginalQuantity(), 100);
+    EXPECT_EQ(orderPtr->getFilledQuantity(), 0);
+    EXPECT_EQ(orderPtr->getRemainingQuantity(), order.getOriginalQuantity());
 
-    ASSERT_GE(order.getSubmittedAt(), before);
-    ASSERT_LE(order.getSubmittedAt(), after);
+    ASSERT_GE(orderPtr->getSubmittedAt(), before);
+    ASSERT_LE(orderPtr->getSubmittedAt(), after);
 
-    ASSERT_TRUE(order.getAddedToBookAt().has_value());
-    ASSERT_GE(*order.getAddedToBookAt(), order.getSubmittedAt());
+    ASSERT_TRUE(orderPtr->getAddedToBookAt().has_value());
+    ASSERT_GE(orderPtr->getAddedToBookAt(), order.getSubmittedAt());
 
-    EXPECT_EQ(order.getModifiedAt(), std::nullopt);
+    EXPECT_EQ(orderPtr->getModifiedAt(), std::nullopt);
 
-    EXPECT_EQ(order.getCancelledAt(), std::nullopt);
+    EXPECT_EQ(orderPtr->getCancelledAt(), std::nullopt);
 
 }
 
@@ -99,6 +93,26 @@ TEST(EngineTest, CorrectMarketOrderParameters) {
 
     EXPECT_EQ(order.getCancelledAt(), std::nullopt);
 
+}
+
+TEST(OrderTest, InvalidLimitOrderParametersDontPopulateBook) {
+
+    Engine eng;
+
+    EXPECT_THROW(eng.submitOrder(Side::Buy, 0, -100), std::invalid_argument);
+
+    EXPECT_TRUE(eng.emptyOrderBook());
+
+}
+
+TEST(OrderTest, InvalidMarketOrderParametersDontPopulateBook) {
+
+    Engine eng;
+
+    EXPECT_THROW(eng.submitOrder(Side::Buy, -100), std::invalid_argument);
+
+    EXPECT_TRUE(eng.emptyOrderBook());
+    
 }
 
 TEST(EngineTest, MatchingOrdersProduceTrade) {
@@ -143,7 +157,7 @@ TEST(TradeTest, NotMatchingOrdersDontProduceTrade) {
 
 TEST(TradeTest, FilledMarketOrder) {
 
-        Engine eng;
+    Engine eng;
 
     Order sell = eng.submitOrder(Side::Sell, 100, 100);
     Order buy = eng.submitOrder(Side::Buy, 100);
@@ -273,6 +287,7 @@ TEST(PartialFillTest, PartialOrderRemains) {
 }
 
 TEST(OrderModificationTest, PriceChange) {
+
     Engine eng;
 
     Order order = eng.submitOrder(Side::Buy, 100, 100);
@@ -284,9 +299,16 @@ TEST(OrderModificationTest, PriceChange) {
     ASSERT_NE(modified, nullptr);
 
     EXPECT_EQ(modified->getPrice(), 105);
+
+    auto info = eng.getOrderInformation(order.getId());
+
+    EXPECT_FALSE(info.getModificationHistory().empty());
+
+    EXPECT_EQ(info.getModificationHistory().size(), 1);
 }
 
 TEST(OrderModificationTest, QuantityChange) {
+
     Engine eng;
 
     Order order = eng.submitOrder(Side::Buy, 100, 100);
@@ -298,9 +320,16 @@ TEST(OrderModificationTest, QuantityChange) {
     ASSERT_NE(modified, nullptr);
 
     EXPECT_EQ(modified->getRemainingQuantity(), 105);
+
+    auto info = eng.getOrderInformation(order.getId());
+
+    EXPECT_FALSE(info.getModificationHistory().empty());
+    
+    EXPECT_EQ(info.getModificationHistory().size(), 1);
 }
 
 TEST(OrderModificationTest, PriceAndQuantityChange) {
+
     Engine eng;
 
     Order order = eng.submitOrder(Side::Buy, 100, 100);
@@ -314,6 +343,36 @@ TEST(OrderModificationTest, PriceAndQuantityChange) {
     EXPECT_EQ(modified->getPrice(), 105);
 
     EXPECT_EQ(modified->getRemainingQuantity(), 110);
+
+    auto info = eng.getOrderInformation(order.getId());
+
+    EXPECT_FALSE(info.getModificationHistory().empty());
+    
+    EXPECT_EQ(info.getModificationHistory().size(), 1);
+}
+
+TEST(OrderModificationTest, TwoChangesProduceTwoModifications) {
+    Engine eng;
+
+    Order order = eng.submitOrder(Side::Buy, 100, 100);
+
+    eng.changeOrderPrice(order.getId(), 105);
+    
+    eng.changeOrderQuantity(order.getId(), 110);
+
+    Order* modified = eng.findOrderById(order.getId());
+
+    ASSERT_NE(modified, nullptr);
+
+    EXPECT_EQ(modified->getPrice(), 105);
+
+    EXPECT_EQ(modified->getRemainingQuantity(), 110);
+
+    auto info = eng.getOrderInformation(order.getId());
+
+    EXPECT_FALSE(info.getModificationHistory().empty());
+    
+    EXPECT_EQ(info.getModificationHistory().size(), 2);
 }
 
 TEST(OrderModification, QuantityChangeLosesPriority)
@@ -337,7 +396,65 @@ TEST(OrderModification, QuantityChangeLosesPriority)
     EXPECT_EQ(secondRemaining->getRemainingQuantity(), 50);
 }
 
-TEST(OrderCancellationTest, OrderCancellation) {
+TEST(OrderModification, OrderModificationSurvivesTrade) {
+
+    Engine eng;
+
+    Order buy = eng.submitOrder(Side::Buy, 100, 90);
+    eng.changeOrderQuantity(buy.getId(), 100);
+
+    Order sell = eng.submitOrder(Side::Sell, 100);
+
+    auto infoBuy = eng.getOrderInformation(buy.getId());
+    auto infoSell = eng.getOrderInformation(sell.getId());
+
+    EXPECT_FALSE(infoBuy.getModificationHistory().empty());
+    EXPECT_TRUE(infoSell.getModificationHistory().empty());
+    
+    EXPECT_EQ(infoBuy.getModificationHistory().size(), 1);
+    EXPECT_EQ(infoSell.getModificationHistory().size(), 0);
+    
+}
+
+TEST(OrderModification, SamePriceQuantityDontChangeModificationInfo) {
+
+    Engine eng;
+
+    Order order = eng.submitOrder(Side::Buy, 100, 150);
+
+    eng.changeOrder(order.getId(), 100, 150);
+
+    eng.changeOrderPrice(order.getId(), 100);
+
+    eng.changeOrderQuantity(order.getId(), 150);
+
+    auto info = eng.getOrderInformation(order.getId());
+
+    EXPECT_TRUE(info.getModificationHistory().empty());
+    
+    EXPECT_EQ(info.getModificationHistory().size(), 0);
+}
+
+TEST(OrderModification, InvalidModificationsDontChangeOrderModificationInfo) {
+
+    Engine eng;
+
+    Order order = eng.submitOrder(Side::Buy, 100, 100);
+
+    eng.changeOrderPrice(order.getId(), 0);
+
+    eng.changeOrderQuantity(order.getId(), -10);
+
+    eng.changeOrder(order.getId(), -100, 0);
+
+    auto info = eng.getOrderInformation(order.getId());
+
+    EXPECT_TRUE(info.getModificationHistory().empty());
+    
+    EXPECT_EQ(info.getModificationHistory().size(), 0);
+}
+
+TEST(OrderCancellation, OrderCancellation) {
 
     Engine eng;
 
@@ -345,7 +462,31 @@ TEST(OrderCancellationTest, OrderCancellation) {
 
     eng.cancelOrder(order.getId());
 
-    EXPECT_TRUE(eng.emptyOrderBook());
+    auto info = eng.getOrderInformation(order.getId());
+
+    ASSERT_TRUE(eng.emptyOrderBook());
+
+    ASSERT_EQ(info.getOrderStatus(), OrderStatus::Cancelled);
+
+}
+
+TEST(OrderCancellation, OrderModificationSurvives) {
+
+    Engine eng;
+
+    Order order = eng.submitOrder(Side::Buy, 100, 100);
+
+    eng.changeOrder(order.getId(), 110, 105);
+
+    eng.cancelOrder(order.getId());
+
+    auto info = eng.getOrderInformation(order.getId());
+
+    ASSERT_TRUE(eng.emptyOrderBook());
+
+    EXPECT_FALSE(info.getModificationHistory().empty());
+
+    EXPECT_EQ(info.getModificationHistory().size(), 1);
 
 }
 
@@ -366,6 +507,9 @@ TEST(FIFO, OlderOrderMatchesFirst)
 
     EXPECT_EQ(firstTrades[0].getQuantity(), 50);
     EXPECT_EQ(secondTrades[0].getQuantity(), 10);
+
+    ASSERT_EQ(eng.getOrderInformation(first.getId()).getOrderStatus(), OrderStatus::Filled);
+    ASSERT_EQ(eng.getOrderInformation(second.getId()).getOrderStatus(), OrderStatus::Active);
 }
 
 TEST(PriceMatching, BestPriceSelection) {
@@ -390,4 +534,7 @@ TEST(PriceMatching, BestPriceSelection) {
     EXPECT_EQ(secondRemaining->getRemainingQuantity(), 0);
     EXPECT_EQ(thirdRemaining->getRemainingQuantity(), 50);
 
+    ASSERT_EQ(eng.getOrderInformation(first.getId()).getOrderStatus(), OrderStatus::Active);
+    ASSERT_EQ(eng.getOrderInformation(second.getId()).getOrderStatus(), OrderStatus::Filled);
+    ASSERT_EQ(eng.getOrderInformation(third.getId()).getOrderStatus(), OrderStatus::Active);
 }

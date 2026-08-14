@@ -16,9 +16,11 @@ class OrderBook {
         std::map<double, std::deque<Order>, std::greater<double>> buyBook;
         std::map<double, std::deque<Order>> sellBook;
 
+        // 1. Add Order To Book
+
         void addToBook(const Order& order);
 
-    public:
+        // 2. Print Book
 
         void printBook() const;
         

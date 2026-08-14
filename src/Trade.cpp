@@ -1,18 +1,18 @@
 #include "Trade.h"
 
-Trade::Trade(const std::string& tradeId, 
-    const std::string& buyOrderId, 
-    const std::string& sellOrderId, 
-    double tradePrice, int tradeQuantity) :
+// ************************************************************
+// PUBLIC METHODS
+// ************************************************************
 
-    tradeId(tradeId),
-    buyOrderId(buyOrderId),
-    sellOrderId(sellOrderId),
-    tradePrice(tradePrice),
-    tradeQuantity(tradeQuantity),
-    tradedAt(std::chrono::system_clock::now())
-    {
-}
+/*
+
+1. Getter methods
+
+*/
+
+// ============================================================
+// 1. Getter Methods
+// ============================================================
 
 std::string Trade::getTradeId() const {
     return tradeId;
@@ -37,6 +37,39 @@ int Trade::getQuantity() const {
 TimePoint Trade::getTradeTime() const {
     return tradedAt;
 }
+
+// ************************************************************
+// PRIVATE METHODS
+// ************************************************************
+
+/*
+
+1. Trade Constructor
+2. Operator Overload
+
+*/
+
+// ============================================================
+// 1. Trade Constructor
+// ============================================================
+
+Trade::Trade(const std::string& tradeId, 
+    const std::string& buyOrderId, 
+    const std::string& sellOrderId, 
+    double tradePrice, int tradeQuantity) :
+
+    tradeId(tradeId),
+    buyOrderId(buyOrderId),
+    sellOrderId(sellOrderId),
+    tradePrice(tradePrice),
+    tradeQuantity(tradeQuantity),
+    tradedAt(std::chrono::system_clock::now())
+    {
+}
+
+// ============================================================
+// 2. Operator Overload
+// ============================================================
 
 std::ostream& operator<<(std::ostream& os, const Trade& trade) {
 

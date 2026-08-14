@@ -7,36 +7,6 @@ featuring price-time priority, limit order handling, dynamic order
 book management, trade execution, order modification, cancellation, 
 and execution history tracking.*/
 
-// Add timestamps? order submission/addition/modification/cancellation; trade
-// Add order modification history 
-
-/* 
-Any time a .cpp file is changed:
-
-cd build
-cmake --build .
-./TradingApp
-
-If adding a new class (new .h/.cpp files): 
-
-cd build
-cmake ..
-cmake --build .
-./TradingApp
-
-To run:
-
-Once in the build directory:
-
-./TradingApp
-
-*/
-
-// cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release
-// cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Debug
-
-
-
 constexpr Side Buy = Side::Buy;
 constexpr Side Sell = Side::Sell;
 
@@ -44,10 +14,42 @@ int main() {
 
     Engine eng;
 
+    std::cout << "=== SUBMITTING ORDERS ===" << "\n\n";
+
     Order buy = eng.submitOrder(Side::Buy, 100, 100);
 
-    eng.submitOrder(Side::Sell, 100, 70);
-    eng.submitOrder(Side::Sell, 90, 30);
+    eng.printBook();
+
+    Order sell = eng.submitOrder(Side::Sell, 100, 60);
+
+    std::cout << "\n" << "=== BUY ORDER INFORMATION ===" << "\n\n";
+    eng.printOrderInformationById(buy.getId());
+
+    std::cout << "\n" << "=== COMPLETING BUY ORDER ===" << "\n\n";
+
+    eng.submitOrder(Side::Sell, 100, 40);
+
+    eng.printOrderInformationById(buy.getId());
+
+    std::cout << "\n" << "=== MODIFYING ORDER ===" << "\n\n";
+
+    Order modified = eng.submitOrder(Side::Buy, 95, 100);
+
+    eng.changeOrderPrice(modified.getId(), 97);
+
+    eng.printOrderInformationById(modified.getId());
+    eng.printOrderModificationHistoryById(modified.getId());
+
+    std::cout << "\n" << "=== CANCELLING ORDER ===" << "\n\n";
+
+    eng.cancelOrder(modified.getId());
+
+    eng.printOrderInformationById(modified.getId());
+
+    std::cout << "\n" << "=== BOOK STATISTICS ===" << "\n";
+
+    eng.printBookStatistics();
+    eng.printTradeStatistics();
 
     return 0;
 }

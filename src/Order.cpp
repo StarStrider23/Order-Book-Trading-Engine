@@ -1,60 +1,18 @@
 #include "Order.h"
 
-Order::Order(const std::string& id, Side side, double price, int quantity) :
+// ************************************************************
+// PUBLIC METHODS
+// ************************************************************
 
-    id(id),
-    side(side),
-    orderType(OrderType::Limit),
-    status(OrderStatus::Active),
+/*
 
-    price(validatePrice(price)),
-    averageExecution(std::nullopt),
+1. Getter methods
 
-    originalQuantity(validateQuantity(quantity)),
-    filledQuantity(0),
-    remainingQuantity(originalQuantity),
+*/
 
-    submittedAt(std::chrono::system_clock::now())
-
-    {   
-}
-
-Order::Order(const std::string& id, Side side, int quantity) :
-
-    id(id),
-    side(side),
-    orderType(OrderType::Market),
-    status(OrderStatus::Active),
-
-    averageExecution(std::nullopt),
-
-    originalQuantity(validateQuantity(quantity)),
-    filledQuantity(0),
-    remainingQuantity(originalQuantity),
-
-    submittedAt(std::chrono::system_clock::now())
-
-    {   
-}
-
-
-double Order::validatePrice(double price) {
-
-    if (price <= 0) {
-
-        throw std::invalid_argument("Order price must be positive.");
-    }
-    return price;
-}
-
-int Order::validateQuantity(int quantity) {
-
-    if (quantity <= 0) {
-
-        throw std::invalid_argument("Order quantity must be positive.");
-    }
-    return quantity;
-}
+// ============================================================
+// 1. Getter Methods
+// ============================================================
 
 std::string Order::getId() const {
     return id;
@@ -144,38 +102,112 @@ OrderInformation Order::getOrderInformation() const {
     return info;
 }
 
+// ************************************************************
+// PRIVATE METHODS
+// ************************************************************
+
+/*
+
+1. Order Constructors
+2. Order Validation
+3. Setter Methods
+4. Operator Overload
+
+*/
+
+// ============================================================
+// 1. Order Constructors
+// ============================================================
+
+Order::Order(const std::string& id, Side side, double price, int quantity) :
+
+    id(id),
+    side(side),
+    orderType(OrderType::Limit),
+    status(OrderStatus::Active),
+
+    price(validatePrice(price)),
+    averageExecution(std::nullopt),
+
+    originalQuantity(validateQuantity(quantity)),
+    filledQuantity(0),
+    remainingQuantity(originalQuantity),
+
+    submittedAt(std::chrono::system_clock::now())
+
+    {   
+}
+
+Order::Order(const std::string& id, Side side, int quantity) :
+
+    id(id),
+    side(side),
+    orderType(OrderType::Market),
+    status(OrderStatus::Active),
+
+    averageExecution(std::nullopt),
+
+    originalQuantity(validateQuantity(quantity)),
+    filledQuantity(0),
+    remainingQuantity(originalQuantity),
+
+    submittedAt(std::chrono::system_clock::now())
+
+    {   
+}
+
+// ============================================================
+// 2. Order Validation
+// ============================================================
+
+double Order::validatePrice(double price) {
+
+    if (price <= 0) {
+
+        throw std::invalid_argument("Order price must be positive.");
+    }
+    return price;
+}
+
+int Order::validateQuantity(int quantity) {
+
+    if (quantity <= 0) {
+
+        throw std::invalid_argument("Order quantity must be positive.");
+    }
+    return quantity;
+}
+
+// ============================================================
+// 3. Setter Methods
+// ============================================================
+
 void Order::setPrice(double newPrice) {
-    this->price = newPrice;
+    price = newPrice;
 }
 
-void Order::setQuantity(int newQuantity) {
-    this->originalQuantity = newQuantity;
-}
-
-void Order::reduceQuantity(int amount) {
-    this->originalQuantity -= amount;
+void Order::setOriginalQuantity(int newQuantity) {
+    originalQuantity = newQuantity;
 }
 
 void Order::setRemainingQuantity(int newQuantity) {
-    this->remainingQuantity = newQuantity;
+    remainingQuantity = newQuantity;
 } 
 
 void Order::setAverageExecution(double newAverageExecution) {
-
-    this->averageExecution = newAverageExecution;
+    averageExecution = newAverageExecution;
 }
 
 void Order::setAddedToBookAt(TimePoint timestamp) {
-
-    this->addedToBookAt = timestamp;
+    addedToBookAt = timestamp;
 }
 
 void Order::setModifiedAt(TimePoint timestamp) {
-    this->modifiedAt = timestamp;
+    modifiedAt = timestamp;
 }
 
 void Order::setCancelledAt(TimePoint timestamp) {
-    this->cancelledAt = timestamp;
+    cancelledAt = timestamp;
 }
 
 void Order::updateAverageExecution(double tradePrice, int tradeQuantity) {
@@ -199,11 +231,14 @@ void Order::updateAverageExecution(double tradePrice, int tradeQuantity) {
 }
 
 void Order::updateQuantity(int tradeQuantity) {
-
     filledQuantity += tradeQuantity;
     remainingQuantity -= tradeQuantity;
 
 }
+
+// ============================================================
+// 4. Operator Overload
+// ============================================================
 
 std::ostream& operator<<(std::ostream& os, const Order& order) {
 

@@ -12,23 +12,9 @@ class Trade {
 
     friend class Engine;
 
-    friend std::ostream& operator<<(std::ostream& os, const Trade& trade);
-
-    private:
-        std::string tradeId;
-        std::string buyOrderId;
-        std::string sellOrderId;
-        double tradePrice;
-        int tradeQuantity;
-        TimePoint tradedAt;
-
-        Trade(const std::string& tradeId, 
-                const std::string& buyOrderId, 
-                const std::string& sellOrderId, 
-                const double tradePrice, 
-                const int tradeQuantity);
-
     public:
+
+        // 1. Getter Methods
 
         std::string getTradeId() const;
 
@@ -41,5 +27,26 @@ class Trade {
         int getQuantity() const;
 
         TimePoint getTradeTime() const;
+
+    private:
+
+        std::string tradeId;
+        std::string buyOrderId;
+        std::string sellOrderId;
+        double tradePrice;
+        int tradeQuantity;
+        TimePoint tradedAt;
+
+        // 1. Trade Constructor
+
+        Trade(const std::string& tradeId, 
+                const std::string& buyOrderId, 
+                const std::string& sellOrderId, 
+                const double tradePrice, 
+                const int tradeQuantity);
+
+    // 2. Operator Overload
+
+    friend std::ostream& operator<<(std::ostream& os, const Trade& trade);
 
 };

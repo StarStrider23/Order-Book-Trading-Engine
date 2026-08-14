@@ -3,13 +3,22 @@
 #include <random>
 #include <chrono>
 
+// Before running the test, make sure to:
+// 1. Remove notification about order submission (Engine.cpp line 36 (and 69 if including Market Orders))
+// 2. Remove notification about trades (Engine.cpp line 812) 
+// 3. Build Release (cmake -S . -B build -DCMAKE_BUILD_TYPE=Release)
+
+// P.S. To return to the Debug Build, type: cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Debug
+
+// Results:
+
 // 100k orders: 
-// Elapsed: 0.152422 seconds
-// Throughput: 656073 orders/sec
+// Elapsed: 0.0804477 seconds
+// Throughput: 1.24304e+06 orders/sec
 
 // 1M orders:
-// Elapsed: 1.49847 seconds
-// Throughput: 667347 orders/sec
+// Elapsed: 1.12879 seconds
+// Throughput: 885903 orders/sec
 
 int main() {
 

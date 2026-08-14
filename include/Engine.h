@@ -10,46 +10,57 @@
 
 class Engine {
 
-    private:
+        public:
 
-        int nextBuyId = 1;
-        int nextSellId = 1;
+        // 1. Order Submisstion
 
-        int nextTradeId = 1;
+        Order submitOrder(Side side, double price, int quantity);
 
-        OrderBook book;
+        Order submitOrder(Side side, int quantity);
 
-        std::unordered_map<std::string, OrderLocation> orderIndex;
+        // 2. Order Search 
 
-        std::unordered_map<std::string, OrderInformation> orderInformation;
+        Order* findOrderById(const std::string& id);
 
-        std::vector<Trade> tradeHistory;
+        const Order* findOrderById(const std::string& id) const;
 
-        std::string assignId(Side side);
+        void displayOrderById(const std::string& id) const;
 
-        Order* findOrderInDeque(std::deque<Order>& orders, const std::string& id);
+        // 3. Order Modification
 
-        const Order* findOrderInDeque(const std::deque<Order>& orders, const std::string& id) const;
+        void changeOrder(const std::string& id, double newPrice, int newQuantity);
 
-        std::optional<Order> modifyOrder(const std::string& id, double new_price, int new_quantity);
+        void changeOrderPrice(const std::string& id, double newPrice);
 
-        std::optional<Order> modifyOrderPrice(const std::string& id, double newPrice);
+        void changeOrderQuantity(const std::string& id, int newQuantity);
 
-        std::optional<Order> modifyOrderQuantity(const std::string& id, int newQuantity);
+        // 4. Order Cancellation
 
-        std::optional<Order> removeOrderFromDeque(std::deque<Order>& orders, const std::string& id);
+        void cancelOrder(const std::string& id);
 
-        void removeOrder(const std::string& id);
+        // 5. Order Information
 
-        void matchOrder(Order& order, OrderBook& book);
+        void printOrderInformationById(const std::string& id) const;
+
+        OrderInformation getOrderInformation(const std::string& id) const;
+
+        // 6. Order Modification History
+
+        void printOrderModificationHistoryById(const std::string& id) const;
+
+        const std::vector<OrderModification>& getOrderModificationHistory(const std::string& id) const;
+
+        // 7. Trade Search
+
+        std::vector<Trade> findTradesByOrderId(const std::string& id) const;
 
         const Trade* findTradeByTradeId(const std::string& tradeId) const;
+        
+        void displayTradeById(const std::string& tradeId) const;
 
-    public:
+        void printTradeHistory() const;
 
-        bool emptyOrderBook() const;
-
-        // Active Order Statistics
+        // 8. Book Statistics
 
         std::optional<double> getBestBid() const;
 
@@ -75,11 +86,7 @@ class Engine {
 
         void printBookStatistics() const;
 
-        //
-
-        bool emptyTradeHistory() const;
-
-        // Trade Statistics
+        // 9. Trade Statistics
 
         int getTradeQuantity() const;
 
@@ -93,40 +100,54 @@ class Engine {
 
         void printTradeStatistics() const;
 
-        //
-
-        Order submitOrder(Side side, double price, int quantity);
-
-        Order submitOrder(Side side, int quantity);
+        // 10. Utility Functions
 
         void printBook() const;
 
-        const Order* findOrderById(const std::string& id) const;
+        bool emptyOrderBook() const;
 
-        Order* findOrderById(const std::string& id);
+        bool emptyTradeHistory() const;
 
-        void displayOrderById(const std::string& id) const;
+    private:
 
-        std::vector<Trade> findTradesByOrderId(const std::string& id) const;
+        int nextBuyId = 1;
+        int nextSellId = 1;
 
-        void changeOrder(const std::string& id, double newPrice, int newQuantity);
+        int nextTradeId = 1;
 
-        void changeOrderPrice(const std::string& id, double newPrice);
+        OrderBook book;
 
-        void changeOrderQuantity(const std::string& id, int newQuantity);
+        std::unordered_map<std::string, OrderLocation> orderIndex;
+        std::unordered_map<std::string, OrderInformation> orderInformation;
+        std::vector<Trade> tradeHistory;
 
-        const std::vector<OrderModification>& getOrderModificationHistory(const std::string& id) const;
+        // 1. ID Assignment
 
-        void printOrderModificationHistoryById(const std::string& id) const;
+        std::string assignId(Side side);
 
-        void cancelOrder(const std::string& id);
+        // 2. Order Search In Deque
 
-        void printOrderInformationById(const std::string& id) const;
+        Order* findOrderInDeque(std::deque<Order>& orders, const std::string& id);
 
-        void displayTradeById(const std::string& tradeId) const;
+        const Order* findOrderInDeque(const std::deque<Order>& orders, const std::string& id) const;
 
-        void printTradeHistory() const;
+        // 3. Order Modification
+        
+        std::optional<Order> modifyOrder(const std::string& id, double new_price, int new_quantity);
 
-        OrderInformation getOrderInformation(const std::string& id) const;
+        std::optional<Order> modifyOrderPrice(const std::string& id, double newPrice);
 
+        std::optional<Order> modifyOrderQuantity(const std::string& id, int newQuantity);
+
+        // 4. Order removal
+
+        std::optional<Order> removeOrderFromDeque(std::deque<Order>& orders, const std::string& id);
+
+        void removeOrder(const std::string& id);
+
+        // 5. Order Matching & Trade Execution
+
+        void matchOrder(Order& order, OrderBook& book);
+
+        void executeTrade(Order& incomingOrder, Order& restingOrder, int tradedQuantity);
 };

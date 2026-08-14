@@ -6,7 +6,26 @@
 #include <ctime>
 #include <vector>
 
-// Side
+// ************************************************************
+// TYPES
+// ************************************************************
+
+/*
+
+1. Side
+2. OrderType
+3. OrderStatus
+4. OrderLocation
+5. OrderModification
+6. OrderInformation
+7. BookStatistics
+8. TradeStatistics
+
+*/
+
+// ************************************************************
+// 1. SIDE. OPERATOR
+// ************************************************************
 
 std::ostream& operator<<(std::ostream& os, const Side& side) {
 
@@ -26,7 +45,9 @@ std::ostream& operator<<(std::ostream& os, const Side& side) {
     return os;
 }
 
-// OrderType
+// ************************************************************
+// 2. ORDERTYPE. OPERATOR OVERLOAD
+// ************************************************************
 
 std::ostream& operator<<(std::ostream& os, const OrderType& orderType) {
 
@@ -46,7 +67,10 @@ std::ostream& operator<<(std::ostream& os, const OrderType& orderType) {
     return os;
 }
 
-// Order Status
+// ************************************************************
+// 3. ORDERSTATUS. OPERATOR OVERLOAD
+// ************************************************************
+
 
 std::ostream& operator<<(std::ostream& os, const OrderStatus& orderStatus) {
 
@@ -76,7 +100,19 @@ std::ostream& operator<<(std::ostream& os, const OrderStatus& orderStatus) {
     return os;
 }
 
-// Order Modification History
+// ************************************************************
+// 4. ORDERLOCATION. 
+// ************************************************************
+
+/*
+
+1. No methods
+
+*/
+
+// ************************************************************
+// 5. ORDERMODIFICATION. ORDER OVERLOAD
+// ************************************************************
 
 std::ostream& operator<<(std::ostream& os, const OrderModification& orderModification) {
 
@@ -105,11 +141,19 @@ std::ostream& operator<<(std::ostream& os, const OrderModification& orderModific
     return os;
 }
 
-// Order Information
+// ************************************************************
+// 6. ORDERINFORMATION. PUBLIC METHODS
+// ************************************************************
 
-const std::vector<OrderModification>& OrderInformation::getModificationHistory() const {
-    return modificationHistory;
-}
+/*
+
+1. Getter Methods
+
+*/
+
+// ============================================================
+// 1. OrderInformation. Getter Methods
+// ============================================================
 
 const OrderType& OrderInformation::getOrderType() const {
     return orderType;
@@ -118,6 +162,26 @@ const OrderType& OrderInformation::getOrderType() const {
 const OrderStatus& OrderInformation::getOrderStatus() const {
     return status;
 }
+
+const std::vector<OrderModification>& OrderInformation::getModificationHistory() const {
+    return modificationHistory;
+}
+
+
+// ************************************************************
+// 6. ORDERINFORMATION. PRIVATE METHODS
+// ************************************************************
+
+/*
+
+1. Setter Methods
+2. Add Modification To History
+
+*/
+
+// ============================================================
+// 1. OrderInformation. Setter Methods
+// ============================================================
 
 void OrderInformation::setStatus(OrderStatus orderStatus) {
 
@@ -154,12 +218,20 @@ void OrderInformation::setModifiedAt(TimePoint time) {
     modifiedAt = time;
 }
 
+// ============================================================
+// 2. OrderInformation. Add Modification To History
+// ============================================================
+
 void OrderInformation::addModification(TimePoint modifiedAt, const int oldQuantity, 
     const int newQuantity, std::optional<double> oldPrice, std::optional<double> newPrice) {
 
     modificationHistory.push_back({modifiedAt, oldQuantity, 
         newQuantity, oldPrice, newPrice});
 }
+
+// ************************************************************
+// 6. ORDERINFORMATION. ORDER OVERLOAD
+// ************************************************************
 
 std::ostream& operator<<(std::ostream& os, const OrderInformation& orderInformation) {
 
@@ -232,7 +304,9 @@ std::ostream& operator<<(std::ostream& os, const OrderInformation& orderInformat
     return os;
 }
 
-// BookStatistics
+// ************************************************************
+// 7. BOOKSTATISTICS. OPERATOR OVERLOAD
+// ************************************************************
 
 std::ostream& operator<<(std::ostream& os, const BookStatistics& bookStatistics) {
 
@@ -272,7 +346,9 @@ std::ostream& operator<<(std::ostream& os, const BookStatistics& bookStatistics)
     return os;
 }
 
-// TradeStatistics
+// ************************************************************
+// 8. TRADESTATISTICS. OPERATOR OVERLOAD
+// ************************************************************
 
 std::ostream& operator<<(std::ostream& os, const TradeStatistics& tradeStatistics) {
 

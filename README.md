@@ -250,7 +250,7 @@ The benchmark was run using a Release build on:
 
 - CPU: Apple M1
 - Compiler: AppleClang 17.0.0
-- Orders: 100 000 (100K) / 1000000 (1M)
+- Orders: 100 000 (100K) / 1 000 000 (1M)
 
 Results:
 

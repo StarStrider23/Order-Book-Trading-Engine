@@ -209,6 +209,16 @@ engine.printBookStatistics();
 engine.printTradeStatistics();
 ```
 
+### Access Order Book
+
+The user can access the order book any time using the following command:
+
+```cpp
+engine.printBook();
+```
+
+The method will print every active order.
+
 ### Other public methods
 
 The methods above are only a fraction of methods that were implemented. In addition, there are many other utility and getter functions.

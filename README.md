@@ -68,13 +68,15 @@ To clarify, let's take order with ID B1. It was added to the order book at 15:46
 
 The sell order can be immediately matched against the best buy order, which is the B1 order. This produces a trade:
 
-`TRADE  
+```text
+TRADE  
 TRADE TIME: 15:47:00
 TRADE ID: T1
 BUY ORDER ID: B1
 SELL ORDER ID: S1
 PRICE: 100
-QUANTITY: 110`
+QUANTITY: 110
+```
 
 As the B1 order is fully filled, it is removed from the order book. The S1 order is now partially filled and the remaining quantity to sell is 40. 
 

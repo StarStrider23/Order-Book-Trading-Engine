@@ -104,7 +104,7 @@ Engine engine;
 
 ### Submitting Orders
 
-Limit orders are submitted by providing a side (```Side::Buy``` or ```Side::Sell```), price (strictly positive) and quantity (strictly):
+Limit orders are submitted by providing a side (```Side::Buy``` or ```Side::Sell```), price (strictly positive) and quantity (strictly positive):
 
 ```cpp
 Order buy = engine.submitOrder(Side::Buy, 100, 100);
@@ -122,7 +122,7 @@ Effectively, one doesn't need an indicator, but it is useful for procedures such
 buy.getId();
 ```
 
-This returns a string object.
+This returns a copy of the order's id which is a string object.
 
 ### Order Search
 

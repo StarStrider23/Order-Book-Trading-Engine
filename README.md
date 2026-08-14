@@ -12,7 +12,7 @@ The requirements are the following:
 
 - C++17 or later
 - CMake 3.20 or later
-- Internet connection for the first CMake configuration, as GoogleTest is downloaded automatically
+- Internet connection for the first CMake configuration as GoogleTest is downloaded automatically
 
 ## Features
 

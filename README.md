@@ -4,7 +4,7 @@ Project by Alexsey Chernichenko. August 2026.
 
 ## Overview
 
-This project is a C++17 (and above) limit order book and matching engine designed to simulate the core functionality of an electronic trading system. The engine supports limit and market orders, order modification and cancellation, order matching, partial and full executions, trade history, execution prices as well as order information and modification history.
+This project is a C++17 (or later) limit order book and matching engine designed to simulate the core functionality of an electronic trading system. The engine supports limit and market orders, order modification and cancellation, order matching, partial and full executions, trade history, execution prices as well as order information and modification history.
 
 ## Requirements 
 

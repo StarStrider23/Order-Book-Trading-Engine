@@ -140,6 +140,79 @@ eng.displayOrderById(buy.getId());
 
 ### Order Modification
 
+An active order can be modified using its ID. There are 3 methods to modify an active order:
+
+```cpp
+engine.changeOrder(buy.getId(), 150, 200);
+```
+
+which changes both price and quantity,
+
+```cpp
+engine.changeOrderPrice(buy.getId(), 150);
+```
+
+which modifies the price only. And finally,
+
+```cpp
+engine.changeOrderPrice(buy.getId(), 200);
+```
+which alters the quantity.
+
+### Order Cancellation
+
+An active order can be cancelled using its ID:
+
+```cpp
+engine.cancelOrder(buy.getId());
+```
+
+### Order Information
+
+Order information can be retrieved using the order ID:
+
+```cpp
+auto information = engine.getOrderInformation(buy.getId());
+```
+
+This gives an `ÒrderInformation` object related to the order. To explicitly print the order information, one should use:
+
+```cpp
+engine.printOrderInformationById(buy.getId());
+```
+
+### Order Modification
+
+Similarly, order modification history can be accessed via:
+
+```cpp
+engine.getOrderModificationHistory(buy.getId());
+```
+
+Which yields a vector with `OrderModification` objects. The vector itself is contained inside `OrderInformation`. To actually print the order modification history, use:
+
+```cpp
+engine.printOrderModificationHistoryById(buy.getId());
+```
+
+If the order wasn't modified, nothing will be printed.
+
+### Book & Trade Statistics
+
+The engine also provides convenience methods for displaying order book and trade statistics.
+
+```cpp
+engine.printBookStatistics();
+```
+
+```cpp
+engine.printTradeStatistics();
+```
+
+### Other public methods
+
+The methods above are only a fraction of methods that were implemented. In addition, there are many other utility and getter functions.
+The reader is encouraged to explore the full list of functions and their usage declared and defined in the `.h` and `.cpp` files. 
 
 ## Configure the project
 

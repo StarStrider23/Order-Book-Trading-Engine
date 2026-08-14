@@ -104,7 +104,7 @@ Engine engine;
 
 ### Submitting Orders
 
-Limit orders are submitted by providing a side (```cpp Side::Buy``` or ```cpp Side::Sell```), price (strictly positive) and quantity (strictly):
+Limit orders are submitted by providing a side (```cppSide::Buy``` or ```cppSide::Sell```), price (strictly positive) and quantity (strictly):
 
 ```cpp
 Order buy = engine.submitOrder(Side::Buy, 100, 100);

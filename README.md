@@ -94,13 +94,52 @@ The seller has now a few options - 1. to change the order price and match order 
 
 ## Usage
 
-### Submitting Orders
+###
 
-Limit orders are submitted by providing a side, price, and quantity:
+To initiate the engine, type:
 
 ```cpp
-Order buy = engine.submitOrder(Side::Buy, 100.0, 100);
+Engine engine;
 ```
+
+### Submitting Orders
+
+Limit orders are submitted by providing a side, price and quantity:
+
+```cpp
+Order buy = engine.submitOrder(Side::Buy, 100, 100);
+```
+
+Whereas market orders only require a side and a quantity:
+
+```cpp
+Order buy = engine.submitOrder(Side::Buy, 100);
+```
+
+Effectively, one doesn't need an indicator, but it is useful for procedures such as order search, modification, cancellation, etc as these require order ID. Order ID can be retrieved using the corresponding getter method:
+
+```cpp
+buy.getId();
+```
+
+This returns a string object.
+
+### Order Search
+
+An order can be retrieved by its ID:
+
+```cpp
+Order* order = engine.findOrderById(buy.getId());
+```
+
+This gives a pointer to the `Order` object called order. If one wants to print out explicitly the order and the information about the side, price and quantity, one should run:
+
+```cpp
+eng.displayOrderById(buy.getId());
+```
+
+### Order Modification
+
 
 ## Configure the project
 

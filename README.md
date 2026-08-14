@@ -58,9 +58,9 @@ Trades are executed at the resting order's price. In general, an order can be fu
 
 Suppose the order book contains two limit orders:
 
-15:46:37 | B1 | BUY | 110 @ 100
+`15:46:37 | B1 | BUY | 110 @ 10`
 
-15:46:40 | B2 | BUY | 50 @ 99
+`15:46:40 | B2 | BUY | 50 @ 99`
 
 To clarify, let's take order with ID B1. It was added to the order book at 15:46:37. It is a buy order with price 100 and quantity 110 (buying 110 shares at/@ 100). Now, let's assume an incoming sell order.
 

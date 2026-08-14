@@ -68,7 +68,7 @@ To clarify, let's take order with ID B1. It was added to the order book at 15:46
 
 The sell order can be immediately matched against the best buy order, which is the B1 order. This produces a trade:
 
-`TRADE. 
+`TRADE  
 TRADE TIME: 15:47:00
 TRADE ID: T1
 BUY ORDER ID: B1

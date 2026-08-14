@@ -64,17 +64,17 @@ Suppose the order book contains two limit orders:
 
 To clarify, let's take order with ID B1. It was added to the order book at 15:46:37. It is a buy order with price 100 and quantity 110 (buying 110 shares at/@ 100). Now, let's assume an incoming sell order.
 
-Order submitted: 15:47:00 | S1 | SELL | 150 @ 100
+`Order submitted: 15:47:00 | S1 | SELL | 150 @ 100`
 
 The sell order can be immediately matched against the best buy order, which is the B1 order. This produces a trade:
 
-TRADE
+`TRADE
 TRADE TIME: 15:47:00
 TRADE ID: T1
 BUY ORDER ID: B1
 SELL ORDER ID: S1
 PRICE: 100
-QUANTITY: 110
+QUANTITY: 110`
 
 As the B1 order is fully filled, it is removed from the order book. The S1 order is now partially filled and the remaining quantity to sell is 40. 
 

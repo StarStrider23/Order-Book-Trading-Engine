@@ -52,7 +52,7 @@ The requirements are the following:
 
 - `BookStatistics` - provides a snapshot of the current state of the order book. It summarises the best ask and bid orders, spread, number of active buy and sell orders as well as their available quantities.
 
-- `Trade Statistics` - summarises trading activity, including the number of trades, total quantities traded, average and volume weighted average prices.
+- `TradeStatistics` - summarises trading activity, including the number of trades, total quantities traded, average and volume weighted average prices.
 
 ## Order Matching
 

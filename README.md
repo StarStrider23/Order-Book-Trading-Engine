@@ -116,7 +116,7 @@ Whereas market orders only require a side and a quantity:
 Order buy = engine.submitOrder(Side::Buy, 100);
 ```
 
-Effectively, one doesn't need an indicator, but it is useful for procedures such as order search, modification, cancellation, etc as these require order ID. Order ID can be retrieved using the corresponding getter method:
+Effectively, one doesn't need an identifiers, but it is useful for procedures such as order search, modification, cancellation, etc as these require order ID. Order ID can be retrieved using the corresponding getter method:
 
 ```cpp
 buy.getId();

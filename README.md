@@ -36,7 +36,7 @@ The requirements are the following:
 
 ## Architecture
 
-### Main Classes/structures
+### Main Classes/Structures
 
 - `Order` - represents an individual limit/market buy or sell order. It stores the order's type, side, price, quantities, execution information and various timestamps. It also tracks its current execution state.
 
